@@ -1,0 +1,17 @@
+[build]
+  functions = "netlify/functions"
+
+[functions]
+  python_version = "3.8"
+
+[[functions]]
+  schedule = "0 9 * * *"  # Run daily at 9 AM UTC
+  name = "sondheim_alert"
+
+[build.environment]
+  PYTHONPATH = "/opt/buildhome/repo"
+
+# Optional: If you want to override environment variables
+# [context.production.environment]
+#   MAX_VENUES = "3"
+#   SEARCH_RADIUS_MILES = "50"
