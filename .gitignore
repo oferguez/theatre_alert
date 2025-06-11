@@ -1,6 +1,5 @@
 # Virtual environments
-sa_venv
-sa_venv/
+venv_theatre_alert
 
 # Python
 __pycache__/

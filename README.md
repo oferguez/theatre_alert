@@ -15,8 +15,10 @@ A serverless Python application that runs daily on Netlify to find Stephen Sondh
 
 1. **Clone and install dependencies:**
    ```bash
-   git clone <your-repo>
-   cd sondheim_alert
+   git clone https://github.com/oferguez/theatre_alert.git
+   cd theatre_alert
+   python3 -m venv venv_theatre_alert
+   source ./venv_theatre_alert/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -40,6 +42,10 @@ A serverless Python application that runs daily on Netlify to find Stephen Sondh
    - Connect your repository to Netlify
    - Set environment variables in Netlify dashboard
    - Deploy - the function will run daily automatically
+
+4. Python Version: Python 3.12.3
+
+
 
 ## Manual Testing
 
