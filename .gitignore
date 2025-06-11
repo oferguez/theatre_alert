@@ -1,8 +1,6 @@
 # Virtual environments
+sa_venv
 sa_venv/
-venv/
-env/
-ENV/
 
 # Python
 __pycache__/
