@@ -1,5 +1,3 @@
-# v1
-
 # Sondheim Alert
 
 A serverless Python application that runs daily on Netlify to find Stephen Sondheim productions near you and send email notifications.
