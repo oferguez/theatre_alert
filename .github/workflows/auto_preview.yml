@@ -1,4 +1,4 @@
-name: Claude Auto Review # force PR
+name: Claude Auto Review # force PR 2
 
 on:
   workflow_dispatch:
