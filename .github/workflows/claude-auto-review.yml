@@ -10,20 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
+      issues: write
       id-token: write
     steps:
-      - name: Check if event type is supported
-        run: |
-          if [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ "${{ github.event_name }}" != "pull_request" ]; then
-            echo "Unsupported event type: ${{ github.event_name }}"
-            exit 0
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 10
 
       - name: Automatic PR Review
         uses: anthropics/claude-code-action@v0.0.17
