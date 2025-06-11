@@ -1,6 +1,7 @@
 name: Claude Auto Review
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
 
@@ -12,15 +13,23 @@ jobs:
       pull-requests: read
       id-token: write
     steps:
+      - name: Check if event type is supported
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "Unsupported event type: ${{ github.event_name }}"
+            exit 0
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@v0.0.17
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           timeout_minutes: "60"
           direct_prompt: |
             Please review this pull request and provide comprehensive feedback.
@@ -35,4 +44,4 @@ jobs:
 
             Provide constructive feedback with specific suggestions for improvement.
             Use inline comments to highlight specific areas of concern.
-          # allowed_tools: "mcp__github__create_pending_pull_request_review,mcp__github__add_pull_request_review_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__github__get_pull_request_diff"
+          allowed_tools: "mcp__github__create_pending_pull_request_review,mcp__github__add_pull_request_review_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__github__get_pull_request_diff"
