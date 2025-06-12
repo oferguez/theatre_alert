@@ -6,7 +6,7 @@
 
 [[functions]]
   schedule = "0 9 * * *"  # Run daily at 9 AM UTC
-  name = "sondheim_alert"
+  name = "theatre_alert"
 
 [build.environment]
   PYTHONPATH = "/opt/buildhome/repo"

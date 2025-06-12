@@ -6,9 +6,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Environment variables
-.env
-
 # IDE
 .vscode/
 .idea/

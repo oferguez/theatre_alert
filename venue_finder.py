@@ -8,10 +8,10 @@ from geopy.distance import geodesic
 
 class VenueFinder:
     def __init__(self):
-        self.geolocator = Nominatim(user_agent="sondheim_alert")
+        self.geolocator = Nominatim(user_agent="theatre_alert")
         
-    def search_sondheim_productions(self) -> List[Dict]:
-        """Search for current Stephen Sondheim productions"""
+    def search_author_productions(self) -> List[Dict]:
+        """Search for current author productions"""
         venues = []
         
         # Search multiple sources
@@ -22,17 +22,18 @@ class VenueFinder:
         return self._deduplicate_venues(venues)
     
     def _search_broadway_world(self) -> List[Dict]:
-        """Search BroadwayWorld for Sondheim productions"""
+        """Search BroadwayWorld for your favourite author productions"""
         venues = []
         try:
-            # Search for common Sondheim shows
-            sondheim_shows = [
+            # Search for common author shows
+            # todo: config / airead
+            shows = [
                 "Into the Woods", "Sweeney Todd", "Company", "Sunday in the Park",
                 "A Little Night Music", "Assassins", "Passion", "Follies",
                 "Anyone Can Whistle", "Getting Away with Murder"
             ]
             
-            for show in sondheim_shows:
+            for show in shows:
                 venues.extend(self._search_show_on_broadwayworld(show))
                 
         except Exception as e:
@@ -54,12 +55,12 @@ class VenueFinder:
         return venues
     
     def _search_playbill(self) -> List[Dict]:
-        """Search Playbill for Sondheim productions"""
+        """Search Playbill for author's productions"""
         # Similar implementation to BroadwayWorld
         return []
     
     def _search_theatreguide(self) -> List[Dict]:
-        """Search Theatre Guide for Sondheim productions"""
+        """Search Theatre Guide for author's productions"""
         # Similar implementation to BroadwayWorld  
         return []
     

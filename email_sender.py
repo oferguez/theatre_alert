@@ -8,12 +8,12 @@ class EmailSender:
         self.sg = sendgrid.SendGridAPIClient(api_key=api_key)
         self.sender_email = sender_email
     
-    def send_venue_alert(self, recipient_email: str, venues: List[Dict], user_location: str) -> bool:
+    def send_venue_alert(self, recipient_email: str, venues: List[Dict], user_location: str, author_name: str) -> bool:
         """Send email alert with venue information"""
         try:
-            subject = f"🎭 Sondheim Productions Near {user_location}"
-            html_content = self._create_html_content(venues, user_location)
-            text_content = self._create_text_content(venues, user_location)
+            subject = f"🎭 {author_name} Productions Near {user_location}"
+            html_content = self._create_html_content(venues, user_location, author_name)
+            text_content = self._create_text_content(venues, user_location, author_name)
             
             from_email = Email(self.sender_email)
             to_email = To(recipient_email)
@@ -33,14 +33,14 @@ class EmailSender:
             print(f"Error sending email: {e}")
             return False
     
-    def _create_html_content(self, venues: List[Dict], user_location: str) -> str:
+    def _create_html_content(self, venues: List[Dict], user_location: str, author_name: str) -> str:
         """Create HTML email content"""
         if not venues:
             return f"""
             <html>
             <body>
-                <h2>🎭 Sondheim Productions Alert</h2>
-                <p>No Stephen Sondheim productions found near {user_location} at this time.</p>
+                <h2>🎭 {author_name} Productions Alert</h2>
+                <p>No {author_name} productions found near {user_location} at this time.</p>
                 <p>We'll keep looking and notify you when something becomes available!</p>
                 <hr>
                 <p><small>Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</small></p>
@@ -64,25 +64,25 @@ class EmailSender:
         return f"""
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h2 style="color: #8B4513;">🎭 Stephen Sondheim Productions Near You</h2>
-            <p>Found {len(venues)} Sondheim production(s) near {user_location}:</p>
+            <h2 style="color: #8B4513;">🎭 {author_name} Productions Near You</h2>
+            <p>Found {len(venues)} {author_name} production(s) near {user_location}:</p>
             {venue_html}
             <hr style="margin: 30px 0;">
             <p style="font-size: 12px; color: #666;">
                 Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}<br>
-                Sondheim Alert Service
+                {author_name} Alert Service
             </p>
         </body>
         </html>
         """
     
-    def _create_text_content(self, venues: List[Dict], user_location: str) -> str:
+    def _create_text_content(self, venues: List[Dict], user_location: str, author_name: str) -> str:
         """Create plain text email content"""
         if not venues:
             return f"""
-🎭 SONDHEIM PRODUCTIONS ALERT
+🎭 {author_name} PRODUCTIONS ALERT
 
-No Stephen Sondheim productions found near {user_location} at this time.
+No {author_name} productions found near {user_location} at this time.
 We'll keep looking and notify you when something becomes available!
 
 Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
@@ -101,11 +101,11 @@ Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
 """
         
         return f"""
-🎭 STEPHEN SONDHEIM PRODUCTIONS NEAR YOU
+🎭 {author_name} PRODUCTIONS NEAR YOU
 
-Found {len(venues)} Sondheim production(s) near {user_location}:
+Found {len(venues)} {author_name} production(s) near {user_location}:
 
 {venue_text}
 Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
-Sondheim Alert Service
+{author_name} Alert Service
         """.strip()

@@ -1,10 +1,10 @@
-# Sondheim Alert
+# Theatre Alert
 
-A serverless Python application that runs daily on Netlify to find Stephen Sondheim productions near you and send email notifications.
+A serverless Python application that runs daily on Netlify to find your favourite author's productions near you and send email notifications.
 
 ## Features
 
-- 🎭 Searches for current Stephen Sondheim productions
+- 🎭 Searches for current author's productions
 - 📍 Finds venues within a configurable radius of your location
 - 📧 Sends email notifications with venue details
 - ⚙️ Fully configurable via environment variables
@@ -32,6 +32,8 @@ A serverless Python application that runs daily on Netlify to find Stephen Sondh
    - `EMAIL_RECIPIENT`: Your email address
    - `EMAIL_SENDER`: Sender email address  
    - `SENDGRID_API_KEY`: Your SendGrid API key
+   - `AUTHOR`: Your favourite author
+
 
    Optional variables:
    - `MAX_VENUES`: Number of venues to find (default: 3)
@@ -51,14 +53,14 @@ A serverless Python application that runs daily on Netlify to find Stephen Sondh
 
 Test the function locally:
 ```bash
-python netlify/functions/sondheim_alert.py
+python netlify/functions/theatre_alert.py
 ```
 
 Test via HTTP (after deployment):
 ```bash
-curl -X POST https://your-site.netlify.app/.netlify/functions/sondheim_alert \
+curl -X POST https://your-site.netlify.app/.netlify/functions/theatre_alert \
   -H "Content-Type: application/json" \
-  -d '{"user_location": "Los Angeles, CA", "max_venues": 5}'
+  -d '{"user_location": "London, UK", "max_venues": 5}'
 ```
 
 ## Configuration
@@ -79,7 +81,7 @@ The function runs daily at 9 AM UTC by default. Modify the schedule in `netlify.
 ```toml
 [[functions]]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
-  name = "sondheim_alert"
+  name = "theatre_alert"
 ```
 
 ## Email Format

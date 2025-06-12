@@ -12,7 +12,7 @@ from email_sender import EmailSender
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
-    Netlify Functions handler for Sondheim Alert
+    Netlify Functions handler for author's Alert
     Can be triggered by scheduled functions or manual invocation
     """
     try:
@@ -31,13 +31,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         max_venues = body.get('max_venues', config.max_venues)
         user_location = body.get('user_location', config.user_location)
         search_radius = body.get('search_radius_miles', config.search_radius_miles)
+        author = body.get('author', config.author_name)
         
         # Initialize services
         venue_finder = VenueFinder()
         email_sender = EmailSender(config.sendgrid_api_key, config.email_sender)
         
         # Search for venues
-        print(f"Searching for Sondheim productions near {user_location}")
+        print(f"Searching for {author} productions near {user_location}")
         
         # For now, using mock data - in production you'd use real search
         all_venues = venue_finder.get_mock_venues()
@@ -56,6 +57,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         # Send email notification
         email_sent = email_sender.send_venue_alert(
+            config.author_name,
             config.email_recipient,
             top_venues,
             user_location
