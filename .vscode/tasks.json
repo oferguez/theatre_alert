@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Pylint All (ignore venv)",
+			"command": "venv_theatre_alert/bin/pylint --ignore=venv_theatre_alert . | tee problem.txt",
+			"args": [],
+			"group": "build",
+			"problemMatcher": [
+				{
+					"owner": "python",
+					"fileLocation": [
+						"relative",
+						"${workspaceFolder}"
+					],
+					"pattern": {
+						"regexp": "^(.+?):(\\d+):(\\d+): ([A-Z]): (.+)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			]
+		}
+	]
+}
