@@ -1,26 +1,22 @@
-import requests
-import re
 from typing import List, Dict, Optional
-from datetime import datetime
-import json
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
 class VenueFinder:
     def __init__(self):
         self.geolocator = Nominatim(user_agent="theatre_alert")
-        
+
     def search_author_productions(self) -> List[Dict]:
         """Search for current author productions"""
         venues = []
-        
+
         # Search multiple sources
         venues.extend(self._search_broadway_world())
         venues.extend(self._search_playbill())
         venues.extend(self._search_theatreguide())
-        
+
         return self._deduplicate_venues(venues)
-    
+
     def _search_broadway_world(self) -> List[Dict]:
         """Search BroadwayWorld for your favourite author productions"""
         venues = []
@@ -32,15 +28,15 @@ class VenueFinder:
                 "A Little Night Music", "Assassins", "Passion", "Follies",
                 "Anyone Can Whistle", "Getting Away with Murder"
             ]
-            
+
             for show in shows:
                 venues.extend(self._search_show_on_broadwayworld(show))
-                
+
         except Exception as e:
             print(f"Error searching BroadwayWorld: {e}")
-            
+
         return venues
-    
+
     def _search_show_on_broadwayworld(self, show_name: str) -> List[Dict]:
         """Search for a specific show on BroadwayWorld"""
         venues = []
@@ -51,32 +47,32 @@ class VenueFinder:
             pass
         except Exception as e:
             print(f"Error searching for {show_name}: {e}")
-            
+
         return venues
-    
+
     def _search_playbill(self) -> List[Dict]:
         """Search Playbill for author's productions"""
         # Similar implementation to BroadwayWorld
         return []
-    
+
     def _search_theatreguide(self) -> List[Dict]:
         """Search Theatre Guide for author's productions"""
-        # Similar implementation to BroadwayWorld  
+        # Similar implementation to BroadwayWorld
         return []
-    
+
     def _deduplicate_venues(self, venues: List[Dict]) -> List[Dict]:
         """Remove duplicate venues based on name and location"""
         seen = set()
         unique_venues = []
-        
+
         for venue in venues:
             key = f"{venue.get('name', '').lower()}_{venue.get('location', '').lower()}"
             if key not in seen:
                 seen.add(key)
                 unique_venues.append(venue)
-                
+
         return unique_venues
-    
+
     def get_venue_coordinates(self, location: str) -> Optional[tuple]:
         """Get latitude and longitude for a location"""
         try:
@@ -86,17 +82,18 @@ class VenueFinder:
         except Exception as e:
             print(f"Error geocoding {location}: {e}")
         return None
-    
+
     def calculate_distance(self, coord1: tuple, coord2: tuple) -> float:
         """Calculate distance between two coordinates in miles"""
         return geodesic(coord1, coord2).miles
-    
-    def filter_by_distance(self, venues: List[Dict], user_location: str, max_distance: int) -> List[Dict]:
+
+    def filter_by_distance(self, venues: List[Dict], user_location: str,
+                           max_distance: int) -> List[Dict]:
         """Filter venues by distance from user location"""
         user_coords = self.get_venue_coordinates(user_location)
         if not user_coords:
             return venues
-            
+
         filtered_venues = []
         for venue in venues:
             venue_coords = self.get_venue_coordinates(venue.get('location', ''))
@@ -105,7 +102,7 @@ class VenueFinder:
                 venue['distance_miles'] = distance
                 if distance <= max_distance:
                     filtered_venues.append(venue)
-        
+
         # Sort by distance
         return sorted(filtered_venues, key=lambda x: x.get('distance_miles', float('inf')))
 
@@ -123,7 +120,7 @@ class VenueFinder:
             {
                 'name': 'Sweeney Todd',
                 'venue': 'Broadway Theatre',
-                'location': 'New York, NY', 
+                'location': 'New York, NY',
                 'dates': 'December 2024 - March 2025',
                 'url': 'https://example.com/sweeney-todd',
                 'distance_miles': 6.1

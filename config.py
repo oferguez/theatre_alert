@@ -10,11 +10,11 @@ import os
 class Config:  # pylint: disable=too-few-public-methods
     """
     Configuration class that loads and validates environment variables.
-    
+
     This class centralizes all configuration management for the theatre alert
     system, including API keys, user preferences, and email settings.
     """
-    
+
     def __init__(self) -> None:
         """Initialize configuration from environment variables."""
         self.max_venues = int(os.getenv('MAX_VENUES', '3'))
@@ -28,10 +28,10 @@ class Config:  # pylint: disable=too-few-public-methods
     def validate(self) -> bool:
         """
         Validate that all required configuration values are present.
-        
+
         Returns:
             bool: True if all required fields are present
-            
+
         Raises:
             ValueError: If any required environment variable is missing
         """

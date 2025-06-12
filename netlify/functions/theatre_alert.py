@@ -10,12 +10,12 @@ import sys
 import os
 from typing import Dict, Any
 
-# Add the parent directory to the path to import our modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
 from config import config
 from venue_finder import VenueFinder
 from email_sender import EmailSender
+
+# Add the parent directory to the path to import our modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
     """
