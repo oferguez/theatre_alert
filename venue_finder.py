@@ -1,8 +1,19 @@
+"""
+venue_finder.py
+
+This module provides the VenueFinder class for searching, deduplicating,
+and filtering theatre venues and productions by location and distance.
+"""
+
 from typing import List, Dict, Optional
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
 class VenueFinder:
+    """
+    VenueFinder provides methods to search for theatre venues and productions, deduplicate results,
+    filter by distance, and retrieve venue coordinates using geolocation services.
+    """
     def __init__(self):
         self.geolocator = Nominatim(user_agent="theatre_alert")
 
@@ -22,7 +33,7 @@ class VenueFinder:
         venues = []
         try:
             # Search for common author shows
-            # todo: config / airead
+            # TODO: Move shows list to configuration or external source
             shows = [
                 "Into the Woods", "Sweeney Todd", "Company", "Sunday in the Park",
                 "A Little Night Music", "Assassins", "Passion", "Follies",
@@ -32,7 +43,7 @@ class VenueFinder:
             for show in shows:
                 venues.extend(self._search_show_on_broadwayworld(show))
 
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             print(f"Error searching BroadwayWorld: {e}")
 
         return venues
@@ -45,7 +56,7 @@ class VenueFinder:
             # For now, returning mock data structure
             # In real implementation, you'd use BeautifulSoup to scrape
             pass
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             print(f"Error searching for {show_name}: {e}")
 
         return venues
@@ -79,7 +90,7 @@ class VenueFinder:
             location_data = self.geolocator.geocode(location)
             if location_data:
                 return (location_data.latitude, location_data.longitude)
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             print(f"Error geocoding {location}: {e}")
         return None
 

@@ -1,8 +1,12 @@
+// Let Pylance handles IntelliSense only while Pylint handles all diagnostics.
 {
+  "python.defaultInterpreterPath": "${workspaceFolder}/venv_theatre_alert/bin/python",
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.autoImportCompletions": true,
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "python.linting.pylintArgs": [
-    "--ignore=venv_theatre_alert"
-  ],
-  "python.defaultInterpreterPath": "${workspaceFolder}/venv_theatre_alert/bin/python"
+    "--ignore=venv_theatre_alert",
+    "--disable=fixme"
+  ]
 }

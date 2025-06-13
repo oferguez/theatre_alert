@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "Pylint All (ignore venv)",
-			"command": "venv_theatre_alert/bin/pylint --ignore=venv_theatre_alert . | tee problem.txt",
+			"command": "venv_theatre_alert/bin/pylint --ignore=venv_theatre_alert --disable=fixme . | tee problem.txt",
 			"args": [],
 			"group": "build",
 			"problemMatcher": [

@@ -5,6 +5,7 @@
 - Include docstrings for classes and functions
 - Prefer list comprehensions over loops where readable
 - Use f-strings for string formatting
+- make sure changes are not causing pylint diagnostic errors or warning. 
 
 ## Common Tasks
 - Adding new API endpoints

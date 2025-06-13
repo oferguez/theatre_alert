@@ -1,12 +1,50 @@
+"""
+Email sending utilities for Theatre Alert application.
+
+This module provides the EmailSender class for sending venue alerts via SendGrid.
+"""
+
 from typing import List, Dict
 from datetime import datetime
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To
 
 class EmailSender:
+    """
+    EmailSender is a utility class for sending email alerts about
+    theatre productions using the SendGrid API.
+
+    Attributes:
+        sg (sendgrid.SendGridAPIClient): The SendGrid API client for sending emails.
+        sender_email (str): The email address from which alerts are sent.
+
+    Methods:
+        __init__(api_key: str, sender_email: str):
+            Initializes the EmailSender with the given SendGrid API key and sender email address.
+
+        send_venue_alert(recipient_email: str, venues: List[Dict],
+                        user_location: str, author_name: str) -> bool:
+            Sends an email alert to the specified recipient with
+            information about theatre venues.
+            Returns True if the email was sent successfully, otherwise False.
+
+        _create_html_content(venues: List[Dict], user_location: str,
+                            author_name: str) -> str:
+            Generates the HTML content for the email based on the
+            provided venues, location, and author.
+
+        _create_text_content(venues: List[Dict], user_location: str,
+                            author_name: str) -> str:
+            Generates the plain text content for the email based on the
+            provided venues, location, and author.
+    """
     def __init__(self, api_key: str, sender_email: str):
         self.sg = sendgrid.SendGridAPIClient(api_key=api_key)
         self.sender_email = sender_email
+
+    def is_configured(self) -> bool:
+        """Check if EmailSender is properly configured with API key"""
+        return self.sg is not None and self.sender_email is not None
     def send_venue_alert(self, recipient_email: str, venues: List[Dict],
                          user_location: str, author_name: str) -> bool:
         """Send email alert with venue information"""
@@ -29,7 +67,7 @@ class EmailSender:
             response = self.sg.send(mail)
             return response.status_code == 202
 
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             print(f"Error sending email: {e}")
             return False
 
@@ -55,7 +93,8 @@ class EmailSender:
                            if 'distance_miles' in venue else "")
             venue_html += f"""
             <div style="margin-bottom: 20px; padding: 15px; border-left: 4px solid #8B4513; background-color: #f9f9f9;">
-                <h3 style="margin-top: 0; color: #8B4513;">{i}. {venue.get('name', 'Unknown Show')}</h3>
+                <h3 style="margin-top: 0; color: #8B4513;">
+                    {i}. {venue.get('name', 'Unknown Show')}</h3>
                 <p><strong>Venue:</strong> {venue.get('venue', 'Unknown Venue')}</p>
                 <p><strong>Location:</strong>
                    {venue.get('location', 'Unknown Location')}{distance_info}</p>
