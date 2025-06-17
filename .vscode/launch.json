@@ -9,7 +9,7 @@
             "name": "Python Debugger: theatre_alert.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/netlify/functions/theatre_alert.py",
+            "program": "${workspaceFolder}/netlify/functions/uk_sondheim_alert.py",
             "console": "integratedTerminal",
             "args": ""
         }

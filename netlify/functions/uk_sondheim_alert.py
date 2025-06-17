@@ -74,7 +74,7 @@ def fetch_calendar_data():
         'app': 'calendar'
     }
 
-    response = requests.post(url, headers=headers, data=data, timeout=15)
+    response = requests.post(url, headers=headers, data=data, timeout=150)
     if not response.ok:
         response.raise_for_status()  # pylint: disable=broad-except
     return response.text
@@ -196,7 +196,8 @@ def handler(_event, _context):
     try:
         raw_data = fetch_calendar_data()
         events = extract_events(raw_data)
-        current, upcoming = categorize_and_sort(events, datetime.utcnow())
+        current, upcoming = categorize_and_sort(events, 
+                                                datetime.datetime.now(datetime.UTC))
         result = format_email(current, upcoming)
         return {
             "statusCode": 200,
@@ -209,6 +210,10 @@ def handler(_event, _context):
         }
 
 def main():
+    """
+    test locally
+    """
+
     response = handler({}, {})
     print(f"Status: {response['statusCode']}\n")
     print(response['body'])
