@@ -10,12 +10,16 @@ import sys
 import os
 from typing import Dict, Any
 
+# Add project root to Python path for clean imports
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# pylint: disable=wrong-import-position
 from config import config
 from venue_finder import VenueFinder
 from email_sender import EmailSender
 
-# Add the parent directory to the path to import our modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
     """
@@ -44,7 +48,7 @@ def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
         max_venues = body.get('max_venues', config.max_venues)
         user_location = body.get('user_location', config.user_location)
         search_radius = body.get('search_radius_miles', config.search_radius_miles)
-        author = body.get('author', config.author_name)
+        author = body.get('author_name', config.author_name)
 
         # Initialize services
         venue_finder = VenueFinder()
