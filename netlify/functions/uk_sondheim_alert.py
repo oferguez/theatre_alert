@@ -1,48 +1,36 @@
 """
-    Extracts the list of event items from the raw calendar data text.
+Netlify Event Handler for UK Sondheim Theatre Alerts
 
-    Args:
-        raw_text (str): The raw response text containing the calendar data.
+This module is designed to be run as a Netlify serverless function. It fetches, processes, and 
+formats Sondheim-related theatre event data in the UK, returning a formatted summary suitable for 
+email or alert delivery. The workflow is as follows:
 
-        list: A list of event dictionaries extracted from the raw text.
+handler(event, context)
+    Input:  event (dict), context (object)
+    Output: dict with 'statusCode' and 'body' (str)
+    - Main entry point for Netlify. Fetches calendar data, extracts events, categorizes and sorts 
+      them, and formats the result for output.
 
-    Categorizes events into current and upcoming, and sorts them.
+fetch_calendar_data()
+    Input:  None
+    Output: str (raw response text from the calendar API)
+    - Sends a POST request to the Sondheim Society events calendar API and returns the raw response.
 
-    Current events are those running on the current_date.
-    Upcoming events are those starting after the current_date.
-    Current events are sorted by distance from London.
-    Upcoming events are sorted by start date.
+extract_events(raw_text)
+    Input:  raw_text (str)
+    Output: list of event dicts
+    - Extracts and parses the list of event items from the raw calendar data text.
 
-    Args:
-        events (list): List of event dictionaries.
-        current_date (datetime): The reference date for categorization.
+categorize_and_sort(events, current_date)
+    Input:  events (list of dict), current_date (datetime)
+    Output: tuple (current, upcoming), each a list of event dicts
+    - Categorizes events into current and upcoming, sorts current by distance from London, and 
+      upcoming by start date.
 
-        tuple: (current, upcoming) where each is a list of event dictionaries.
-
-    Formats the current and upcoming events into a human-readable email body.
-
-    Args:
-        current (list): List of current event dictionaries.
-        upcoming (list): List of upcoming event dictionaries.
-
-        str: The formatted email body as a string.
-
-    Netlify serverless function handler.
-
-    Fetches, processes, and formats Sondheim event data, returning the result
-    as an HTTP response.
-
-    Args:
-        event (dict): The event data from Netlify.
-        context (dict): The context data from Netlify.
-
-        dict: A dictionary with 'statusCode' and 'body' keys for the HTTP response.
-Fetches, categorizes, and formats Sondheim-related theatre events in the UK.
-
-This module retrieves event data from an external calendar API, extracts and sorts
-current and upcoming Sondheim productions by distance from London, and formats the
-results for email or alert delivery. It is designed for use as a Netlify serverless
-function.
+format_email(current, upcoming)
+    Input:  current (list of dict), upcoming (list of dict)
+    Output: str (formatted summary)
+    - Formats the current and upcoming events into a human-readable summary for email or alerts.
 """
 
 from datetime import datetime
@@ -192,7 +180,7 @@ def format_email(current, upcoming):
     body += [fmt(e) for e in upcoming] if upcoming else ["(None announced.)"]
     return '\n'.join(body)
 
-def handler(event, context):
+def handler(_event, _context):
     """
     Handles incoming event and context, processes calendar data, returns formatted email content.
 
@@ -219,3 +207,11 @@ def handler(event, context):
             "statusCode": 500,
             "body": f"Error: {str(e)}"
         }
+
+def main():
+    response = handler({}, {})
+    print(f"Status: {response['statusCode']}\n")
+    print(response['body'])
+
+if __name__ == "__main__":
+    main()
