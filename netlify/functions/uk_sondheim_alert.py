@@ -34,6 +34,7 @@ format_email(current, upcoming)
 """
 
 from datetime import datetime
+from datetime import UTC
 import json
 import re
 from geopy.distance import geodesic
@@ -61,22 +62,24 @@ def fetch_calendar_data():
         'accept': '*/*',
         'content-type': 'application/x-www-form-urlencoded',
         'origin': 'https://plugin.eventscalendar.co',
-        'referer': (
-            'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2&compId=comp-m7kbpz0j'
-        ),
+        'referer': 'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2'
+            '&compId=comp-m7kbpz0j&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site'
+            '&deviceType=desktop&locale=en&tz=Europe%2FLondon&regionalLanguage=en&width=956'
+            '&height=824&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...',
         'user-agent': 'Mozilla/5.0'
     }
     data = {
         '_referrer': 'https://www.sondheimsociety.com/',
-        '_origin': (
-            'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2&compId=comp-m7kbpz0j'
-        ),
+        '_origin': 'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2&compId=comp-m7kbpz0j'
+          '&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site&deviceType=desktop&locale=en'
+          '&tz=Europe%2FLondon&regionalLanguage=en&width=956&height=824'
+          '&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...',
         'app': 'calendar'
     }
 
     response = requests.post(url, headers=headers, data=data, timeout=150)
     if not response.ok:
-        response.raise_for_status()  # pylint: disable=broad-except
+        response.raise_for_status()
     return response.text
 
 def extract_events(raw_text):
@@ -196,8 +199,8 @@ def handler(_event, _context):
     try:
         raw_data = fetch_calendar_data()
         events = extract_events(raw_data)
-        current, upcoming = categorize_and_sort(events, 
-                                                datetime.datetime.now(datetime.UTC))
+        current, upcoming = categorize_and_sort(events,
+                                                datetime.now(UTC))
         result = format_email(current, upcoming)
         return {
             "statusCode": 200,
