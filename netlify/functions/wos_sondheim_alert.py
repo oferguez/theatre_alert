@@ -4,9 +4,11 @@ extract info for each and compile a weekly email report
 """
 
 import re
-from typing import List, Optional
+import requests
+from typing import List
 
 from bs4 import BeautifulSoup, Tag
+import os
 
 shows: List[str] = [
         'Here We Are',
@@ -86,6 +88,25 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
                 break
     return more_info_urls
 
+def extract_show_info(info_url: str) -> str:
+    return info_url + os.linesep
+
+def get_show_page(show_name: str) -> str:
+    """
+    extract show page html
+    """
+    result:str = ""
+    query_url:str = f"https://www.whatsonstage.com/?s={show_name.replace(' ','+')}" 
+    show_page:str = requests.get(query_url, timeout=30)
+    info_pages:List[str] = extract_info_links(show_page, show_name)
+    for info_page:str in info_pages:
+        result += extract_show_info(info_page)
+    return result
+
+
+def search_shows(shows:List[str]) -> str:
+    for show in shows:
+        info_urls:List[str] = extract_info_links(show)
 
 if __name__ == "__main__":
     with open("./obs/wos.html", "r", encoding="utf-8") as f:
