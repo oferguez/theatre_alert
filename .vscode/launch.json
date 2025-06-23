@@ -4,12 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "Python Debugger: theatre_alert.py",
+            "name": "Python Debugger: wos_sondheim_alert.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/netlify/functions/uk_sondheim_alert.py",
+            "program": "${workspaceFolder}/netlify/functions/wos_sondheim_alert.py",
             "console": "integratedTerminal",
             "args": ""
         }

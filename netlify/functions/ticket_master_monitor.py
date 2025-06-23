@@ -16,6 +16,8 @@ _shows: List[str] = [
     'Gypsy'
 ]
 shows: List[str] = [
+        'Here We Are',
+
         'Saturday Night',
         'Candide',
         'West Side Story',
@@ -52,11 +54,11 @@ def handler(_event, _context):
     """
 
     for show in shows:
-        show.replace(' ','+')
-        query_url: str = f'{base_url}events.json?keyword={show}&countryCode=UK&apikey={api_key}'
+        show = show.replace(' ','+')
+        query_url: str = f'{base_url}events.json?keyword={show}&apikey={api_key}'
         response = requests.get(query_url, timeout=30)
         result = response.json()
-        if 'page' in result and result['page']['totalPages'] > 0:
+        if True or ('page' in result and result['page']['totalPages'] > 0):
             print(query_url)
             PrettyPrinter().pprint(result)
             print()

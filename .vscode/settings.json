@@ -8,5 +8,6 @@
   "python.linting.pylintArgs": [
     "--ignore=venv_theatre_alert",
     "--disable=fixme"
-  ]
+  ],
+  "terminal.integrated.shellArgs.linux": ["-c", "source {path_to_virtualenv}/bin/activate; bash"]
 }
