@@ -1,6 +1,4 @@
 """
-
-
     List[str]: A list of URLs for the 'More Info' buttons related to the specified show.
     ...
 
@@ -163,7 +161,10 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
     Returns:
         str: A formatted string containing the show name and info page details.
     """
-    return f"show: {show_name}, url: {show_info_page_html}{os.linesep}"
+    soup = BeautifulSoup(show_info_page_html, "html.parser")
+    canonical_link = soup.find("link", rel="canonical")
+    url: str = canonical_link["href"] if canonical_link and canonical_link.has_attr("href") else "N/A"
+    return f"show: {show_name}, url: {url}{os.linesep}"
 
 
 def get_show_page(show_name: str) -> str:
@@ -177,7 +178,7 @@ def get_show_page(show_name: str) -> str:
         str: The HTML content of the search results page.
     """
     query_url: str = f"https://www.whatsonstage.com/?s={show_name.replace(' ','+')}"
-    show_page: str = requests.get(query_url, timeout=30)
+    show_page: str = requests.get(query_url, timeout=30).text
     return show_page
 
 
@@ -191,7 +192,7 @@ def get_info_page(info_url: str) -> str:
     Returns:
         str: The HTML content of the info page.
     """
-    return requests.get(info_url, timeout=30)
+    return requests.get(info_url, timeout=30).text
 
 
 def search_shows(shows: List[str]) -> str:
