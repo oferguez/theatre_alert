@@ -3,11 +3,28 @@
   "python.defaultInterpreterPath": "${workspaceFolder}/venv_theatre_alert/bin/python",
   "python.analysis.typeCheckingMode": "off",
   "python.analysis.autoImportCompletions": true,
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.pylintArgs": [
-    "--ignore=venv_theatre_alert",
-    "--disable=fixme"
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "pylint.args": [
+    "\"pylint.args\": [\"--disable=fixme,C0301\"]"
   ],
-  "terminal.integrated.shellArgs.linux": ["-c", "source {path_to_virtualenv}/bin/activate; bash"]
+  // "terminal.integrated.shellArgs.linux": [
+  //   "-c",
+  //   "source {path_to_virtualenv}/bin/activate; bash"
+  // ],
+
+  "terminal.integrated.profiles.linux": {
+    "Ubuntu": { // This should match the 'NAME' of your WSL distro (e.g., 'Ubuntu', 'Debian', etc.)
+      "path": "wsl.exe",
+      "args": [
+        "-e", // Execute the command after the -e flag
+        "bash",
+        "-c", // Pass the command to bash's -c option
+        "source ${path_to_virtualenv}/bin/activate; bash" // Your actual command
+      ],
+      "icon": "terminal-ubuntu"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Ubuntu"
 }

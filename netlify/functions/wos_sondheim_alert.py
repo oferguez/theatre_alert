@@ -125,7 +125,7 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
     articles: List[Tag] = search_results_container.find_all("article", class_="col-12")
 
     more_info_urls: List[str] = []
-
+    
     article: Tag
     for article in articles:
         type_link_tag: Optional[Tag] = article.find("a", class_="text-body-tertiary")
