@@ -61,6 +61,8 @@ search WhatsOnStage.com for all Sondheim shows,
 extract info for each and compile a weekly email report
 """
 
+# pylint: disable=broad-except
+
 import datetime
 import os
 import re
@@ -68,8 +70,11 @@ from typing import List, Optional
 import requests
 from bs4 import BeautifulSoup, Tag
 
+SHOWS_: List[str] = [
+    "Company"
+]
+
 SHOWS: List[str] = [
-    "Here We Are",
     "Saturday Night",
     "Candide",
     "West Side Story",
@@ -97,7 +102,6 @@ SHOWS: List[str] = [
     "Here We Are",
     "Hot Spot",
 ]
-
 
 def extract_info_links(html_content: str, show_name: str) -> List[str]:
     """
@@ -135,8 +139,10 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
             continue
 
         article_title: str = article_title_tag.get_text(strip=True)
-        if not re.search(re.escape(show_name), article_title, re.IGNORECASE):
+        if article_title.strip().lower() != show_name.strip().lower():
+            print(f'skipping {article_title}')
             continue
+
         more_info_links_in_article: List[Tag] = article.find_all(
             "a", class_="buy-tickets-link"
         )
@@ -148,8 +154,11 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
                 if href:
                     more_info_urls.append(href)
                 break
+    if more_info_urls:
+        print(f'{len(more_info_urls)} info urls: {more_info_urls}')
+    else:
+        print('no info urls')
     return more_info_urls
-
 
 def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> str:
     """
@@ -167,22 +176,43 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
 
     opening_night:str = "N/A"
     closing_night:str = "N/A"
+    first_preview:str = "N/A"
     venue_name:str = "N/A"
     venue_url:str = "N/A"
+    info_url:str = "N/A"
+
+    try:
+        canonical_link = soup.find("link", rel="canonical")
+        if canonical_link and canonical_link.get("href"):
+            info_url = canonical_link["href"]
+        else:
+            og_url = soup.find("meta", property="og:url")
+            if og_url and og_url.get("content"):
+                info_url = og_url["content"]
+    except Exception as e:
+        print(f'error extracting info_url for show: {show_name}')
+        print(str(e.with_traceback))
 
     try:
         dates_section = soup.find(class_="dates-section")
+        first_preview_p_tag = dates_section.find('p',\
+                                                string=re.compile("first preview",\
+                                                re.IGNORECASE))
+        if first_preview_p_tag:
+            first_preview = first_preview_p_tag.text.strip()
         opening_night_p_tag = dates_section.find('p',\
                                                 string=re.compile("opening night",\
                                                 re.IGNORECASE))
-        opening_night = opening_night_p_tag.text.strip()
+        if opening_night_p_tag:
+            opening_night = opening_night_p_tag.text.strip()
         closing_night_p_tag = dates_section.find('p',\
                                                  string=re.compile("closing night",\
                                                  re.IGNORECASE))
-        closing_night = closing_night_p_tag.text.strip()
+        if closing_night_p_tag:
+            closing_night = closing_night_p_tag.text.strip()
     except Exception as e:
         print (f'error extracting dates for show: {show_name}')
-        print(e.with_traceback)
+        print(str(e.with_traceback))
 
     try:
         location_section = soup.find('div', class_='location-section')
@@ -194,9 +224,12 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
         print (f'error extracting location for show: {show_name}')
         print(e.with_traceback)
 
-    result = f"show: {show_name} " + \
+    result = f"show: {show_name}" + \
+             f" first preview: {first_preview} " + \
              f" date: {opening_night} to {closing_night}" + \
              f" venue: {venue_name} url: {venue_url} " + \
+             f" extracted from: {info_url}" + \
+             f" {os.linesep}" + \
              f" {os.linesep}"
 
     return result
@@ -242,11 +275,8 @@ def search_shows(shows: List[str]) -> str:
     """
     result: str = ""
     for show_name in shows:
-        now = time.time()
-        seconds = int(now)
-        milliseconds = int((now - seconds) * 1000)
-        print(f"Time: {seconds}.{milliseconds:03d} s")
-        print(f'[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}] searching show {show_name}...')
+        print(f'[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\
+               searching show {show_name}...')
         show_page_html: str = get_show_page(show_name)
         info_urls: List[str] = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
@@ -259,6 +289,7 @@ def test_flow() -> None:
     full flow
     """
     result: str = search_shows(SHOWS)
+    print()
     print(result)
 
 
