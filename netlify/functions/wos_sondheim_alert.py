@@ -61,16 +61,12 @@ search WhatsOnStage.com for all Sondheim shows,
 extract info for each and compile a weekly email report
 """
 
-# pylint: disable=broad-except
-
 import datetime
 import os
 import re
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import requests
-from bs4 import BeautifulSoup, Tag
-
-SHOWS_: List[str] = ["Company"]
+from bs4 import BeautifulSoup
 
 SHOWS: List[str] = [
     "Saturday Night",
@@ -346,3 +342,6 @@ def test_html_parser_show_info() -> None:
             "The Frogs", html_content_from_file
         )
         print(result)
+
+if __name__ == "__main__":
+    test_flow()
