@@ -5,6 +5,7 @@ This module provides serverless function capabilities for checking
 theatre venue availability and sending email notifications through
 Netlify Functions platform.
 """
+
 import json
 import sys
 import os
@@ -25,7 +26,7 @@ def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
     """
     Netlify Functions handler for author's Alert
     Can be triggered by scheduled functions or manual invocation
-    
+
     Args:
         event: The event data from Netlify Functions
         context: The context object (unused but required by Netlify Functions)
@@ -38,17 +39,17 @@ def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
 
         # Parse request body if present (for manual triggers)
         body = {}
-        if event.get('body'):
+        if event.get("body"):
             try:
-                body = json.loads(event['body'])
+                body = json.loads(event["body"])
             except json.JSONDecodeError:
                 pass
 
         # Allow override of configuration via request body
-        max_venues = body.get('max_venues', config.max_venues)
-        user_location = body.get('user_location', config.user_location)
-        search_radius = body.get('search_radius_miles', config.search_radius_miles)
-        author = body.get('author_name', config.author_name)
+        max_venues = body.get("max_venues", config.max_venues)
+        user_location = body.get("user_location", config.user_location)
+        search_radius = body.get("search_radius_miles", config.search_radius_miles)
+        author = body.get("author_name", config.author_name)
 
         # Initialize services
         venue_finder = VenueFinder()
@@ -62,9 +63,7 @@ def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
 
         # Filter by distance and limit results
         filtered_venues = venue_finder.filter_by_distance(
-            all_venues,
-            user_location,
-            search_radius
+            all_venues, user_location, search_radius
         )
 
         # Limit to max venues
@@ -74,71 +73,63 @@ def handler(event: Dict[str, Any], context: Any = None) -> Dict[str, Any]:
 
         # Send email notification
         email_sent = email_sender.send_venue_alert(
-            config.author_name,
-            config.email_recipient,
-            top_venues,
-            user_location
+            config.author_name, config.email_recipient, top_venues, user_location
         )
 
         # Prepare response
         response_data = {
-            'success': True,
-            'venues_found': len(top_venues),
-            'email_sent': email_sent,
-            'venues': top_venues,
-            'search_location': user_location,
-            'search_radius': search_radius
+            "success": True,
+            "venues_found": len(top_venues),
+            "email_sent": email_sent,
+            "venues": top_venues,
+            "search_location": user_location,
+            "search_radius": search_radius,
         }
 
         return {
-            'statusCode': 200,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
             },
-            'body': json.dumps(response_data, indent=2)
+            "body": json.dumps(response_data, indent=2),
         }
 
     except ValueError as e:
         # Configuration error
         print(f"Configuration error: {e}")
         return {
-            'statusCode': 400,
-            'headers': {
-                'Content-Type': 'application/json'
-            },
-            'body': json.dumps({
-                'success': False,
-                'error': 'Configuration error',
-                'message': str(e)
-            })
+            "statusCode": 400,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(
+                {"success": False, "error": "Configuration error", "message": str(e)}
+            ),
         }
 
     except (ImportError, AttributeError, TypeError) as e:
         # General error
         print(f"Unexpected error: {e}")
         return {
-            'statusCode': 500,
-            'headers': {
-                'Content-Type': 'application/json'
-            },
-            'body': json.dumps({
-                'success': False,
-                'error': 'Internal server error',
-                'message': str(e)
-            })
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(
+                {"success": False, "error": "Internal server error", "message": str(e)}
+            ),
         }
+
 
 # For testing locally
 if __name__ == "__main__":
     # Mock event for local testing
     test_event = {
-        'httpMethod': 'POST',
-        'body': json.dumps({
-            'user_location': 'New York, NY',
-            'max_venues': 3,
-            'search_radius_miles': 100
-        })
+        "httpMethod": "POST",
+        "body": json.dumps(
+            {
+                "user_location": "New York, NY",
+                "max_venues": 3,
+                "search_radius_miles": 100,
+            }
+        ),
     }
 
     result = handler(test_event, None)

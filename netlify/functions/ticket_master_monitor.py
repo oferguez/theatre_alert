@@ -10,42 +10,38 @@ from typing import List
 import requests
 
 
-api_key: str = 'ZsknChi2tE4GxAWH4uSbfduzj5REVYEJ'
-base_url: str = 'https://app.ticketmaster.com/discovery/v2/'
-_shows: List[str] = [
-    'Gypsy'
-]
+api_key: str = "ZsknChi2tE4GxAWH4uSbfduzj5REVYEJ"
+base_url: str = "https://app.ticketmaster.com/discovery/v2/"
+_shows: List[str] = ["Gypsy"]
 shows: List[str] = [
-        'Here We Are',
-
-        'Saturday Night',
-        'Candide',
-        'West Side Story',
-        'Gypsy',
-        'A Funny Thing Happened on the Way to the Forum',
-        'Anyone Can Whistle',
-        'Do I Hear a Waltz?',
-        'The Mad Show',
-        'Evening Primrose',
-        'Company',
-        'Follies',
-        'A Little Night Music',
-        'The Frogs',
-        'Pacific Overtures',
-        'Side by Side by Sondheim',
-        'Sweeney Todd',
-        'Marry Me a Little',
-        'Merrily We Roll Along',
-        'Sunday in the Park with George',
-        'Into the Woods',
-        'Assassins',
-        'Putting It Together',
-        'Passion',
-        'Road Show',
-        'Here We Are',
-        'Hot Spot'
-        ]
-
+    "Here We Are",
+    "Saturday Night",
+    "Candide",
+    "West Side Story",
+    "Gypsy",
+    "A Funny Thing Happened on the Way to the Forum",
+    "Anyone Can Whistle",
+    "Do I Hear a Waltz?",
+    "The Mad Show",
+    "Evening Primrose",
+    "Company",
+    "Follies",
+    "A Little Night Music",
+    "The Frogs",
+    "Pacific Overtures",
+    "Side by Side by Sondheim",
+    "Sweeney Todd",
+    "Marry Me a Little",
+    "Merrily We Roll Along",
+    "Sunday in the Park with George",
+    "Into the Woods",
+    "Assassins",
+    "Putting It Together",
+    "Passion",
+    "Road Show",
+    "Here We Are",
+    "Hot Spot",
+]
 
 
 def handler(_event, _context):
@@ -54,14 +50,15 @@ def handler(_event, _context):
     """
 
     for show in shows:
-        show = show.replace(' ','+')
-        query_url: str = f'{base_url}events.json?keyword={show}&apikey={api_key}'
+        show = show.replace(" ", "+")
+        query_url: str = f"{base_url}events.json?keyword={show}&apikey={api_key}"
         response = requests.get(query_url, timeout=30)
         result = response.json()
-        if True or ('page' in result and result['page']['totalPages'] > 0):
+        if True or ("page" in result and result["page"]["totalPages"] > 0):
             print(query_url)
             PrettyPrinter().pprint(result)
             print()
+
 
 if __name__ == "__main__":
     handler({}, {})
@@ -74,4 +71,3 @@ curl -o obs/r.json 'https://app.ticketmaster.com/discovery/v2/events.json?keywor
 doc apikey ->
 curl 'https://app.ticketmaster.com/discovery/v2/events.json?keyword=sondheim&countryCode=GB&apikey=ZsknChi2tE4GxAWH4uSbfduzj5REVYEJ'
 """
-

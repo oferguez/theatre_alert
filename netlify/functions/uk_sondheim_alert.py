@@ -1,14 +1,14 @@
 """
 Netlify Event Handler for UK Sondheim Theatre Alerts
 
-This module is designed to be run as a Netlify serverless function. It fetches, processes, and 
-formats Sondheim-related theatre event data in the UK, returning a formatted summary suitable for 
+This module is designed to be run as a Netlify serverless function. It fetches, processes, and
+formats Sondheim-related theatre event data in the UK, returning a formatted summary suitable for
 email or alert delivery. The workflow is as follows:
 
 handler(event, context)
     Input:  event (dict), context (object)
     Output: dict with 'statusCode' and 'body' (str)
-    - Main entry point for Netlify. Fetches calendar data, extracts events, categorizes and sorts 
+    - Main entry point for Netlify. Fetches calendar data, extracts events, categorizes and sorts
       them, and formats the result for output.
 
 fetch_calendar_data()
@@ -24,7 +24,7 @@ extract_events(raw_text)
 categorize_and_sort(events, current_date)
     Input:  events (list of dict), current_date (datetime)
     Output: tuple (current, upcoming), each a list of event dicts
-    - Categorizes events into current and upcoming, sorts current by distance from London, and 
+    - Categorizes events into current and upcoming, sorts current by distance from London, and
       upcoming by start date.
 
 format_email(current, upcoming)
@@ -43,12 +43,13 @@ import requests
 # CONFIG: Reference point for distance sorting (London) TODO take from cfg
 CONFIG_LOCATION = (51.53166, -0.09592)
 
+
 def fetch_calendar_data():
     """
     Fetches calendar data from the Sondheim Society events calendar API.
 
-    Sends a POST request to the specified calendar data endpoint with 
-    required headers and form data, emulating a browser request from the 
+    Sends a POST request to the specified calendar data endpoint with
+    required headers and form data, emulating a browser request from the
     Sondheim Society website. Raises an exception if the request fails.
 
     Returns:
@@ -57,30 +58,31 @@ def fetch_calendar_data():
     Raises:
         Exception: If the HTTP request to fetch the calendar data is unsuccessful.
     """
-    url = 'https://inffuse.eventscalendar.co/js/v0.1/calendar/data'
+    url = "https://inffuse.eventscalendar.co/js/v0.1/calendar/data"
     headers = {
-        'accept': '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        'origin': 'https://plugin.eventscalendar.co',
-        'referer': 'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2'
-            '&compId=comp-m7kbpz0j&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site'
-            '&deviceType=desktop&locale=en&tz=Europe%2FLondon&regionalLanguage=en&width=956'
-            '&height=824&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...',
-        'user-agent': 'Mozilla/5.0'
+        "accept": "*/*",
+        "content-type": "application/x-www-form-urlencoded",
+        "origin": "https://plugin.eventscalendar.co",
+        "referer": "https://plugin.eventscalendar.co/widget.html?pageId=hh2t2"
+        "&compId=comp-m7kbpz0j&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site"
+        "&deviceType=desktop&locale=en&tz=Europe%2FLondon&regionalLanguage=en&width=956"
+        "&height=824&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...",
+        "user-agent": "Mozilla/5.0",
     }
     data = {
-        '_referrer': 'https://www.sondheimsociety.com/',
-        '_origin': 'https://plugin.eventscalendar.co/widget.html?pageId=hh2t2&compId=comp-m7kbpz0j'
-          '&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site&deviceType=desktop&locale=en'
-          '&tz=Europe%2FLondon&regionalLanguage=en&width=956&height=824'
-          '&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...',
-        'app': 'calendar'
+        "_referrer": "https://www.sondheimsociety.com/",
+        "_origin": "https://plugin.eventscalendar.co/widget.html?pageId=hh2t2&compId=comp-m7kbpz0j"
+        "&viewerCompId=comp-m7kbpz0j&siteRevision=2218&viewMode=site&deviceType=desktop&locale=en"
+        "&tz=Europe%2FLondon&regionalLanguage=en&width=956&height=824"
+        "&instance=NrA4m_IkoOIybt-RPJB0TGnfg46AfRSRQqhbcMfcUTk...",
+        "app": "calendar",
     }
 
     response = requests.post(url, headers=headers, data=data, timeout=150)
     if not response.ok:
         response.raise_for_status()
     return response.text
+
 
 def extract_events(raw_text):
     """
@@ -100,6 +102,7 @@ def extract_events(raw_text):
     if not match:
         return []
     return json.loads(match.group(1))
+
 
 def categorize_and_sort(events, current_date):
     """
@@ -127,17 +130,17 @@ def categorize_and_sort(events, current_date):
     current, upcoming = [], []
     for e in events:
         try:
-            start = datetime.fromisoformat(e['start'].replace('Z', '+00:00'))
-            end = datetime.fromisoformat(e['end'].replace('Z', '+00:00'))
-            venue = e.get('location', {}).get('venue', 'Unknown Venue')
-            coords = e.get('location', {}).get('coordinates', [None, None])
+            start = datetime.fromisoformat(e["start"].replace("Z", "+00:00"))
+            end = datetime.fromisoformat(e["end"].replace("Z", "+00:00"))
+            venue = e.get("location", {}).get("venue", "Unknown Venue")
+            coords = e.get("location", {}).get("coordinates", [None, None])
             lat, lon = coords if coords and len(coords) == 2 else (None, None)
             item = {
-                "title": e['title'],
+                "title": e["title"],
                 "venue": venue,
                 "start": start,
                 "end": end,
-                "latlon": (lat, lon)
+                "latlon": (lat, lon),
             }
             if start <= current_date <= end:
                 current.append(item)
@@ -147,13 +150,14 @@ def categorize_and_sort(events, current_date):
             continue
 
     def distance(item):
-        if None in item['latlon']:
-            return float('inf')
-        return geodesic(CONFIG_LOCATION, item['latlon']).kilometers
+        if None in item["latlon"]:
+            return float("inf")
+        return geodesic(CONFIG_LOCATION, item["latlon"]).kilometers
 
     current.sort(key=distance)
-    upcoming.sort(key=lambda e: e['start'])
+    upcoming.sort(key=lambda e: e["start"])
     return current, upcoming
+
 
 def format_email(current, upcoming):
     """
@@ -172,6 +176,7 @@ def format_email(current, upcoming):
         str: A formatted string suitable for use as an email body, listing current and upcoming
             Sondheim productions.
     """
+
     def fmt(e):
         date_range = f"{e['start'].date()} to {e['end'].date()}"
         return f"- {e['title']} @ {e['venue']} ({date_range})"
@@ -181,7 +186,8 @@ def format_email(current, upcoming):
 
     body += ["\n📅 *Upcoming Sondheim Productions:*"]
     body += [fmt(e) for e in upcoming] if upcoming else ["(None announced.)"]
-    return '\n'.join(body)
+    return "\n".join(body)
+
 
 def handler(_event, _context):
     """
@@ -199,18 +205,12 @@ def handler(_event, _context):
     try:
         raw_data = fetch_calendar_data()
         events = extract_events(raw_data)
-        current, upcoming = categorize_and_sort(events,
-                                                datetime.now(UTC))
+        current, upcoming = categorize_and_sort(events, datetime.now(UTC))
         result = format_email(current, upcoming)
-        return {
-            "statusCode": 200,
-            "body": result
-        }
+        return {"statusCode": 200, "body": result}
     except Exception as e:  # pylint: disable=broad-except
-        return {
-            "statusCode": 500,
-            "body": f"Error: {str(e)}"
-        }
+        return {"statusCode": 500, "body": f"Error: {str(e)}"}
+
 
 def main():
     """
@@ -219,7 +219,8 @@ def main():
 
     response = handler({}, {})
     print(f"Status: {response['statusCode']}\n")
-    print(response['body'])
+    print(response["body"])
+
 
 if __name__ == "__main__":
     main()

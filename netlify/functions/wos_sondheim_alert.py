@@ -70,9 +70,7 @@ from typing import List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup, Tag
 
-SHOWS_: List[str] = [
-    "Company"
-]
+SHOWS_: List[str] = ["Company"]
 
 SHOWS: List[str] = [
     "Saturday Night",
@@ -102,6 +100,7 @@ SHOWS: List[str] = [
     "Here We Are",
     "Hot Spot",
 ]
+
 
 def extract_info_links(html_content: str, show_name: str) -> List[str]:
     """
@@ -140,7 +139,7 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
 
         article_title: str = article_title_tag.get_text(strip=True)
         if article_title.strip().lower() != show_name.strip().lower():
-            print(f'skipping {article_title}')
+            print(f"skipping {article_title}")
             continue
 
         more_info_links_in_article: List[Tag] = article.find_all(
@@ -155,10 +154,11 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
                     more_info_urls.append(href)
                 break
     if more_info_urls:
-        print(f'{len(more_info_urls)} info urls: {more_info_urls}')
+        print(f"{len(more_info_urls)} info urls: {more_info_urls}")
     else:
-        print('no info urls')
+        print("no info urls")
     return more_info_urls
+
 
 def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> str:
     """
@@ -174,12 +174,12 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
 
     soup = BeautifulSoup(show_info_page_html, "html.parser")
 
-    opening_night:str = "N/A"
-    closing_night:str = "N/A"
-    first_preview:str = "N/A"
-    venue_name:str = "N/A"
-    venue_url:str = "N/A"
-    info_url:str = "N/A"
+    opening_night: str = "N/A"
+    closing_night: str = "N/A"
+    first_preview: str = "N/A"
+    venue_name: str = "N/A"
+    venue_url: str = "N/A"
+    info_url: str = "N/A"
 
     try:
         canonical_link = soup.find("link", rel="canonical")
@@ -190,48 +190,56 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
             if og_url and og_url.get("content"):
                 info_url = og_url["content"]
     except Exception as e:
-        print(f'error extracting info_url for show: {show_name}')
+        print(f"error extracting info_url for show: {show_name}")
         print(str(e.with_traceback))
 
     try:
         dates_section = soup.find(class_="dates-section")
-        first_preview_p_tag = dates_section.find('p',\
-                                                string=re.compile("first preview",\
-                                                re.IGNORECASE))
+        first_preview_p_tag = dates_section.find(
+            "p", string=re.compile("first preview", re.IGNORECASE)
+        )
         if first_preview_p_tag:
-            first_preview = first_preview_p_tag.text.strip().replace('First Preview', '')
-        opening_night_p_tag = dates_section.find('p',\
-                                                string=re.compile("opening night",\
-                                                re.IGNORECASE))
+            first_preview = first_preview_p_tag.text.strip().replace(
+                "First Preview", ""
+            )
+        opening_night_p_tag = dates_section.find(
+            "p", string=re.compile("opening night", re.IGNORECASE)
+        )
         if opening_night_p_tag:
-            opening_night = opening_night_p_tag.text.strip().replace('Opening Night', '')
-        closing_night_p_tag = dates_section.find('p',\
-                                                 string=re.compile("closing night",\
-                                                 re.IGNORECASE))
+            opening_night = opening_night_p_tag.text.strip().replace(
+                "Opening Night", ""
+            )
+        closing_night_p_tag = dates_section.find(
+            "p", string=re.compile("closing night", re.IGNORECASE)
+        )
         if closing_night_p_tag:
-            closing_night = closing_night_p_tag.text.strip().replace('Closing Night', '')
+            closing_night = closing_night_p_tag.text.strip().replace(
+                "Closing Night", ""
+            )
     except Exception as e:
-        print (f'error extracting dates for show: {show_name}')
+        print(f"error extracting dates for show: {show_name}")
         print(str(e.with_traceback))
 
     try:
-        location_section = soup.find('div', class_='location-section')
-        block_detail_div = location_section.find('div', class_='block-detail')
-        venue_link_tag = block_detail_div.find('a')
+        location_section = soup.find("div", class_="location-section")
+        block_detail_div = location_section.find("div", class_="block-detail")
+        venue_link_tag = block_detail_div.find("a")
         venue_name = venue_link_tag.get_text(strip=True)
-        venue_url = venue_link_tag.get('href')
+        venue_url = venue_link_tag.get("href")
     except Exception as e:
-        print (f'error extracting location for show: {show_name}')
+        print(f"error extracting location for show: {show_name}")
         print(e.with_traceback)
 
-    result = f"show: {show_name}" + \
-             f" first preview: {first_preview} " + \
-             f" date: {opening_night} to {closing_night}" + \
-             f" venue: {venue_name} url: {venue_url} " + \
-             f" extracted from: {info_url}" + \
-             f" {os.linesep}" + \
-             f" {os.linesep}"
-            # Build a pretty HTML snippet for the show info
+    result = (
+        f"show: {show_name}"
+        + f" first preview: {first_preview} "
+        + f" date: {opening_night} to {closing_night}"
+        + f" venue: {venue_name} url: {venue_url} "
+        + f" extracted from: {info_url}"
+        + f" {os.linesep}"
+        + f" {os.linesep}"
+    )
+    # Build a pretty HTML snippet for the show info
     html_result = f"""
         <div style="border:3px solid #e67e22; border-radius:16px; padding:24px; margin-bottom:32px; font-family:'Segoe UI', 'Arial', 'Helvetica Neue', Arial, sans-serif; background:linear-gradient(135deg,#fffbe6 0%,#ffe0b2 100%); box-shadow:0 4px 24px rgba(230,126,34,0.15);">
             <h2 style="margin-top:0; color:#c0392b; font-size:2em; letter-spacing:1px; text-shadow:1px 1px 0 #f9ca24, 2px 2px 0 #e67e22; font-family:'Segoe UI', Arial, sans-serif;">🎭 {show_name} 🎶</h2>
@@ -244,7 +252,7 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
             </ul>
         </div>
         """
-    return result,html_result
+    return result, html_result
 
 
 def get_show_page(show_name: str) -> str:
@@ -288,52 +296,55 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     result: str = ""
     html_aggregate: str = ""
     for show_name in shows:
-        print(f'[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\
-               searching show {show_name}...')
+        print(
+            f"[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\
+               searching show {show_name}..."
+        )
         show_page_html: str = get_show_page(show_name)
         info_urls: List[str] = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
             show_info_page_html: str = get_info_page(info_url)
-            text_result, html_result = extract_details_from_info_page(show_name, show_info_page_html)
+            text_result, html_result = extract_details_from_info_page(
+                show_name, show_info_page_html
+            )
             result += text_result
             html_aggregate += html_result
     html_report = (
-            "<!DOCTYPE html>\n"
-            "<html lang='en'>\n"
-            "<head>\n"
-            "  <meta charset='UTF-8'>\n"
-            "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n"
-            "  <title>Sondheim Shows Weekly Report</title>\n"
-            "</head>\n"
-            "<body style='background:#f4f6f8; margin:0; padding:32px;'>\n"
-            f"{html_aggregate}\n"
-            "</body>\n"
-            "</html>\n"
-        )
-    return result,html_report
+        "<!DOCTYPE html>\n"
+        "<html lang='en'>\n"
+        "<head>\n"
+        "  <meta charset='UTF-8'>\n"
+        "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n"
+        "  <title>Sondheim Shows Weekly Report</title>\n"
+        "</head>\n"
+        "<body style='background:#f4f6f8; margin:0; padding:32px;'>\n"
+        f"{html_aggregate}\n"
+        "</body>\n"
+        "</html>\n"
+    )
+    return result, html_report
+
 
 def test_flow() -> None:
     """
     full flow
     """
-    result_tuple: Tuple[str,str] = search_shows(SHOWS)
+    result_tuple: Tuple[str, str] = search_shows(SHOWS)
     result, html_report = result_tuple
     filename = f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_report)
     print(f"HTML report saved to {filename}")
 
-    print('-'*30)
+    print("-" * 30)
     print(html_report)
-    print('-'*30)
+    print("-" * 30)
     print(result)
-    print('-'*30)
+    print("-" * 30)
 
 
 if __name__ == "__main__":
     test_flow()
-
-
 
 
 def test_html_parser_show_page():
@@ -346,12 +357,15 @@ def test_html_parser_show_page():
         result = extract_info_links(html_content_from_file, "The Frogs")
         print(f"result: {result}")
 
+
 def test_html_parser_show_info():
     """
     Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
     and prints the result.
     """
-    with open('./obs/wos_info.html', 'r', encoding='utf-8') as f:
+    with open("./obs/wos_info.html", "r", encoding="utf-8") as f:
         html_content_from_file = f.read()
-        result:str = extract_details_from_info_page("The Frogs", html_content_from_file)
+        result: str = extract_details_from_info_page(
+            "The Frogs", html_content_from_file
+        )
         print(result)

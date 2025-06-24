@@ -9,11 +9,13 @@ from typing import List, Dict, Optional
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
+
 class VenueFinder:
     """
     VenueFinder provides methods to search for theatre venues and productions, deduplicate results,
     filter by distance, and retrieve venue coordinates using geolocation services.
     """
+
     def __init__(self):
         self.geolocator = Nominatim(user_agent="theatre_alert")
 
@@ -35,15 +37,22 @@ class VenueFinder:
             # Search for common author shows
             # TODO: Move shows list to configuration or external source
             shows = [
-                "Into the Woods", "Sweeney Todd", "Company", "Sunday in the Park",
-                "A Little Night Music", "Assassins", "Passion", "Follies",
-                "Anyone Can Whistle", "Getting Away with Murder"
+                "Into the Woods",
+                "Sweeney Todd",
+                "Company",
+                "Sunday in the Park",
+                "A Little Night Music",
+                "Assassins",
+                "Passion",
+                "Follies",
+                "Anyone Can Whistle",
+                "Getting Away with Murder",
             ]
 
             for show in shows:
                 venues.extend(self._search_show_on_broadwayworld(show))
 
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             print(f"Error searching BroadwayWorld: {e}")
 
         return venues
@@ -56,7 +65,7 @@ class VenueFinder:
             # For now, returning mock data structure
             # In real implementation, you'd use BeautifulSoup to scrape
             pass
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             print(f"Error searching for {show_name}: {e}")
 
         return venues
@@ -90,7 +99,7 @@ class VenueFinder:
             location_data = self.geolocator.geocode(location)
             if location_data:
                 return (location_data.latitude, location_data.longitude)
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             print(f"Error geocoding {location}: {e}")
         return None
 
@@ -98,8 +107,9 @@ class VenueFinder:
         """Calculate distance between two coordinates in miles"""
         return geodesic(coord1, coord2).miles
 
-    def filter_by_distance(self, venues: List[Dict], user_location: str,
-                           max_distance: int) -> List[Dict]:
+    def filter_by_distance(
+        self, venues: List[Dict], user_location: str, max_distance: int
+    ) -> List[Dict]:
         """Filter venues by distance from user location"""
         user_coords = self.get_venue_coordinates(user_location)
         if not user_coords:
@@ -107,41 +117,43 @@ class VenueFinder:
 
         filtered_venues = []
         for venue in venues:
-            venue_coords = self.get_venue_coordinates(venue.get('location', ''))
+            venue_coords = self.get_venue_coordinates(venue.get("location", ""))
             if venue_coords:
                 distance = self.calculate_distance(user_coords, venue_coords)
-                venue['distance_miles'] = distance
+                venue["distance_miles"] = distance
                 if distance <= max_distance:
                     filtered_venues.append(venue)
 
         # Sort by distance
-        return sorted(filtered_venues, key=lambda x: x.get('distance_miles', float('inf')))
+        return sorted(
+            filtered_venues, key=lambda x: x.get("distance_miles", float("inf"))
+        )
 
     def get_mock_venues(self) -> List[Dict]:
         """Return mock data for testing purposes"""
         return [
             {
-                'name': 'Into the Woods',
-                'venue': 'Lincoln Center Theater',
-                'location': 'New York, NY',
-                'dates': 'Now through January 2025',
-                'url': 'https://example.com/into-the-woods',
-                'distance_miles': 5.2
+                "name": "Into the Woods",
+                "venue": "Lincoln Center Theater",
+                "location": "New York, NY",
+                "dates": "Now through January 2025",
+                "url": "https://example.com/into-the-woods",
+                "distance_miles": 5.2,
             },
             {
-                'name': 'Sweeney Todd',
-                'venue': 'Broadway Theatre',
-                'location': 'New York, NY',
-                'dates': 'December 2024 - March 2025',
-                'url': 'https://example.com/sweeney-todd',
-                'distance_miles': 6.1
+                "name": "Sweeney Todd",
+                "venue": "Broadway Theatre",
+                "location": "New York, NY",
+                "dates": "December 2024 - March 2025",
+                "url": "https://example.com/sweeney-todd",
+                "distance_miles": 6.1,
             },
             {
-                'name': 'Company',
-                'venue': 'Regional Theatre',
-                'location': 'Philadelphia, PA',
-                'dates': 'January - February 2025',
-                'url': 'https://example.com/company',
-                'distance_miles': 95.3
-            }
+                "name": "Company",
+                "venue": "Regional Theatre",
+                "location": "Philadelphia, PA",
+                "dates": "January - February 2025",
+                "url": "https://example.com/company",
+                "distance_miles": 95.3,
+            },
         ]
