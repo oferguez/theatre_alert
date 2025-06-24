@@ -113,43 +113,28 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
     Returns:
         List[str]: A list of URLs for the 'More Info' buttons related to the specified show.
     """
-    soup: BeautifulSoup = BeautifulSoup(html_content, "html.parser")
-
-    search_results_container: Optional[Tag] = soup.find(
-        "div", id="search-results-container"
-    )
-
+    soup = BeautifulSoup(html_content, "html.parser")
+    search_results_container = soup.find("div", id="search-results-container")
     if not search_results_container:
         return []
-
-    articles: List[Tag] = search_results_container.find_all("article", class_="col-12")
-
+    articles = search_results_container.find_all("article", class_="col-12")
     more_info_urls: List[str] = []
-    
-    article: Tag
     for article in articles:
-        type_link_tag: Optional[Tag] = article.find("a", class_="text-body-tertiary")
+        type_link_tag = article.find("a", class_="text-body-tertiary")
         if not type_link_tag or type_link_tag.get_text(strip=True).upper() != "SHOW":
             continue
-        article_title_tag: Optional[Tag] = article.find("h3", class_="fw-bold").find(
-            "a"
-        )
+        article_title_tag = article.find("h3", class_="fw-bold").find("a")
         if not article_title_tag:
             continue
-
-        article_title: str = article_title_tag.get_text(strip=True)
+        article_title = article_title_tag.get_text(strip=True)
         if article_title.strip().lower() != show_name.strip().lower():
             print(f"skipping {article_title}")
             continue
-
-        more_info_links_in_article: List[Tag] = article.find_all(
-            "a", class_="buy-tickets-link"
-        )
-        link: Tag
+        more_info_links_in_article = article.find_all("a", class_="buy-tickets-link")
         for link in more_info_links_in_article:
-            span_tag: Optional[Tag] = link.find("span", string="More Info")
+            span_tag = link.find("span", string="More Info")
             if span_tag:
-                href: Optional[str] = link.get("href")
+                href = link.get("href")
                 if href:
                     more_info_urls.append(href)
                 break
@@ -160,7 +145,7 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
     return more_info_urls
 
 
-def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> str:
+def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> Tuple[str, str]:
     """
     Formats and returns details for a show from its info page HTML.
 
@@ -169,18 +154,15 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
         show_info_page_html (str): The HTML content of the show's info page.
 
     Returns:
-        str: A formatted string containing the show name and info page details.
+        Tuple[str, str]: A tuple containing the formatted string and the HTML snippet for the show.
     """
-
     soup = BeautifulSoup(show_info_page_html, "html.parser")
-
-    opening_night: str = "N/A"
-    closing_night: str = "N/A"
-    first_preview: str = "N/A"
-    venue_name: str = "N/A"
-    venue_url: str = "N/A"
-    info_url: str = "N/A"
-
+    opening_night = "N/A"
+    closing_night = "N/A"
+    first_preview = "N/A"
+    venue_name = "N/A"
+    venue_url = "N/A"
+    info_url = "N/A"
     try:
         canonical_link = soup.find("link", rel="canonical")
         if canonical_link and canonical_link.get("href"):
@@ -192,44 +174,45 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
     except Exception as e:
         print(f"error extracting info_url for show: {show_name}")
         print(str(e.with_traceback))
-
     try:
         dates_section = soup.find(class_="dates-section")
-        first_preview_p_tag = dates_section.find(
-            "p", string=re.compile("first preview", re.IGNORECASE)
-        )
-        if first_preview_p_tag:
-            first_preview = first_preview_p_tag.text.strip().replace(
-                "First Preview", ""
+        if dates_section:
+            first_preview_p_tag = dates_section.find(
+                "p", string=re.compile("first preview", re.IGNORECASE)
             )
-        opening_night_p_tag = dates_section.find(
-            "p", string=re.compile("opening night", re.IGNORECASE)
-        )
-        if opening_night_p_tag:
-            opening_night = opening_night_p_tag.text.strip().replace(
-                "Opening Night", ""
+            if first_preview_p_tag:
+                first_preview = first_preview_p_tag.text.strip().replace(
+                    "First Preview", ""
+                )
+            opening_night_p_tag = dates_section.find(
+                "p", string=re.compile("opening night", re.IGNORECASE)
             )
-        closing_night_p_tag = dates_section.find(
-            "p", string=re.compile("closing night", re.IGNORECASE)
-        )
-        if closing_night_p_tag:
-            closing_night = closing_night_p_tag.text.strip().replace(
-                "Closing Night", ""
+            if opening_night_p_tag:
+                opening_night = opening_night_p_tag.text.strip().replace(
+                    "Opening Night", ""
+                )
+            closing_night_p_tag = dates_section.find(
+                "p", string=re.compile("closing night", re.IGNORECASE)
             )
+            if closing_night_p_tag:
+                closing_night = closing_night_p_tag.text.strip().replace(
+                    "Closing Night", ""
+                )
     except Exception as e:
         print(f"error extracting dates for show: {show_name}")
         print(str(e.with_traceback))
-
     try:
         location_section = soup.find("div", class_="location-section")
-        block_detail_div = location_section.find("div", class_="block-detail")
-        venue_link_tag = block_detail_div.find("a")
-        venue_name = venue_link_tag.get_text(strip=True)
-        venue_url = venue_link_tag.get("href")
+        if location_section:
+            block_detail_div = location_section.find("div", class_="block-detail")
+            if block_detail_div:
+                venue_link_tag = block_detail_div.find("a")
+                if venue_link_tag:
+                    venue_name = venue_link_tag.get_text(strip=True)
+                    venue_url = venue_link_tag.get("href")
     except Exception as e:
         print(f"error extracting location for show: {show_name}")
         print(e.with_traceback)
-
     result = (
         f"show: {show_name}"
         + f" first preview: {first_preview} "
@@ -239,7 +222,6 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
         + f" {os.linesep}"
         + f" {os.linesep}"
     )
-    # Build a pretty HTML snippet for the show info
     html_result = f"""
         <div style="border:3px solid #e67e22; border-radius:16px; padding:24px; margin-bottom:32px; font-family:'Segoe UI', 'Arial', 'Helvetica Neue', Arial, sans-serif; background:linear-gradient(135deg,#fffbe6 0%,#ffe0b2 100%); box-shadow:0 4px 24px rgba(230,126,34,0.15);">
             <h2 style="margin-top:0; color:#c0392b; font-size:2em; letter-spacing:1px; text-shadow:1px 1px 0 #f9ca24, 2px 2px 0 #e67e22; font-family:'Segoe UI', Arial, sans-serif;">🎭 {show_name} 🎶</h2>
@@ -265,8 +247,8 @@ def get_show_page(show_name: str) -> str:
     Returns:
         str: The HTML content of the search results page.
     """
-    query_url: str = f"https://www.whatsonstage.com/?s={show_name.replace(' ','+')}"
-    show_page: str = requests.get(query_url, timeout=30).text
+    query_url = f"https://www.whatsonstage.com/?s={show_name.replace(' ','+')}"
+    show_page = requests.get(query_url, timeout=30).text
     return show_page
 
 
@@ -293,17 +275,17 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     Returns:
         str: A compiled string of extracted show information for all shows.
     """
-    result: str = ""
-    html_aggregate: str = ""
+    result = ""
+    html_aggregate = ""
     for show_name in shows:
         print(
-            f"[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\
-               searching show {show_name}..."
+            f"[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]"
+            f" searching show {show_name}..."
         )
-        show_page_html: str = get_show_page(show_name)
-        info_urls: List[str] = extract_info_links(show_page_html, show_name)
+        show_page_html = get_show_page(show_name)
+        info_urls = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
-            show_info_page_html: str = get_info_page(info_url)
+            show_info_page_html = get_info_page(info_url)
             text_result, html_result = extract_details_from_info_page(
                 show_name, show_info_page_html
             )
@@ -329,13 +311,12 @@ def test_flow() -> None:
     """
     full flow
     """
-    result_tuple: Tuple[str, str] = search_shows(SHOWS)
+    result_tuple = search_shows(SHOWS)
     result, html_report = result_tuple
     filename = f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_report)
     print(f"HTML report saved to {filename}")
-
     print("-" * 30)
     print(html_report)
     print("-" * 30)
@@ -343,11 +324,7 @@ def test_flow() -> None:
     print("-" * 30)
 
 
-if __name__ == "__main__":
-    test_flow()
-
-
-def test_html_parser_show_page():
+def test_html_parser_show_page() -> None:
     """
     Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
     and prints the result.
@@ -358,14 +335,14 @@ def test_html_parser_show_page():
         print(f"result: {result}")
 
 
-def test_html_parser_show_info():
+def test_html_parser_show_info() -> None:
     """
     Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
     and prints the result.
     """
     with open("./obs/wos_info.html", "r", encoding="utf-8") as f:
         html_content_from_file = f.read()
-        result: str = extract_details_from_info_page(
+        result = extract_details_from_info_page(
             "The Frogs", html_content_from_file
         )
         print(result)
