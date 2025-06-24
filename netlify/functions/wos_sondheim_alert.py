@@ -61,6 +61,7 @@ search WhatsOnStage.com for all Sondheim shows,
 extract info for each and compile a weekly email report
 """
 
+import datetime
 import os
 import re
 from typing import List, Optional
@@ -161,10 +162,44 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
     Returns:
         str: A formatted string containing the show name and info page details.
     """
+
     soup = BeautifulSoup(show_info_page_html, "html.parser")
-    canonical_link = soup.find("link", rel="canonical")
-    url: str = canonical_link["href"] if canonical_link and canonical_link.has_attr("href") else "N/A"
-    return f"show: {show_name}, url: {url}{os.linesep}"
+
+    opening_night:str = "N/A"
+    closing_night:str = "N/A"
+    venue_name:str = "N/A"
+    venue_url:str = "N/A"
+
+    try:
+        dates_section = soup.find(class_="dates-section")
+        opening_night_p_tag = dates_section.find('p',\
+                                                string=re.compile("opening night",\
+                                                re.IGNORECASE))
+        opening_night = opening_night_p_tag.text.strip()
+        closing_night_p_tag = dates_section.find('p',\
+                                                 string=re.compile("closing night",\
+                                                 re.IGNORECASE))
+        closing_night = closing_night_p_tag.text.strip()
+    except Exception as e:
+        print (f'error extracting dates for show: {show_name}')
+        print(e.with_traceback)
+
+    try:
+        location_section = soup.find('div', class_='location-section')
+        block_detail_div = location_section.find('div', class_='block-detail')
+        venue_link_tag = block_detail_div.find('a')
+        venue_name = venue_link_tag.get_text(strip=True)
+        venue_url = venue_link_tag.get('href')
+    except Exception as e:
+        print (f'error extracting location for show: {show_name}')
+        print(e.with_traceback)
+
+    result = f"show: {show_name} " + \
+             f" date: {opening_night} to {closing_night}" + \
+             f" venue: {venue_name} url: {venue_url} " + \
+             f" {os.linesep}"
+
+    return result
 
 
 def get_show_page(show_name: str) -> str:
@@ -207,6 +242,11 @@ def search_shows(shows: List[str]) -> str:
     """
     result: str = ""
     for show_name in shows:
+        now = time.time()
+        seconds = int(now)
+        milliseconds = int((now - seconds) * 1000)
+        print(f"Time: {seconds}.{milliseconds:03d} s")
+        print(f'[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}] searching show {show_name}...')
         show_page_html: str = get_show_page(show_name)
         info_urls: List[str] = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
@@ -228,7 +268,7 @@ if __name__ == "__main__":
 
 
 
-def test_html_parser1():
+def test_html_parser_show_page():
     """
     Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
     and prints the result.
@@ -237,3 +277,13 @@ def test_html_parser1():
         html_content_from_file = f.read()
         result = extract_info_links(html_content_from_file, "The Frogs")
         print(f"result: {result}")
+
+def test_html_parser_show_info():
+    """
+    Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
+    and prints the result.
+    """
+    with open('./obs/wos_info.html', 'r', encoding='utf-8') as f:
+        html_content_from_file = f.read()
+        result:str = extract_details_from_info_page("The Frogs", html_content_from_file)
+        print(result)
