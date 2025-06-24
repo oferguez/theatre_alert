@@ -66,7 +66,7 @@ extract info for each and compile a weekly email report
 import datetime
 import os
 import re
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup, Tag
 
@@ -199,17 +199,17 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
                                                 string=re.compile("first preview",\
                                                 re.IGNORECASE))
         if first_preview_p_tag:
-            first_preview = first_preview_p_tag.text.strip()
+            first_preview = first_preview_p_tag.text.strip().replace('First Preview', '')
         opening_night_p_tag = dates_section.find('p',\
                                                 string=re.compile("opening night",\
                                                 re.IGNORECASE))
         if opening_night_p_tag:
-            opening_night = opening_night_p_tag.text.strip()
+            opening_night = opening_night_p_tag.text.strip().replace('Opening Night', '')
         closing_night_p_tag = dates_section.find('p',\
                                                  string=re.compile("closing night",\
                                                  re.IGNORECASE))
         if closing_night_p_tag:
-            closing_night = closing_night_p_tag.text.strip()
+            closing_night = closing_night_p_tag.text.strip().replace('Closing Night', '')
     except Exception as e:
         print (f'error extracting dates for show: {show_name}')
         print(str(e.with_traceback))
@@ -231,8 +231,20 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
              f" extracted from: {info_url}" + \
              f" {os.linesep}" + \
              f" {os.linesep}"
-
-    return result
+            # Build a pretty HTML snippet for the show info
+    html_result = f"""
+        <div style="border:3px solid #e67e22; border-radius:16px; padding:24px; margin-bottom:32px; font-family:'Segoe UI', 'Arial', 'Helvetica Neue', Arial, sans-serif; background:linear-gradient(135deg,#fffbe6 0%,#ffe0b2 100%); box-shadow:0 4px 24px rgba(230,126,34,0.15);">
+            <h2 style="margin-top:0; color:#c0392b; font-size:2em; letter-spacing:1px; text-shadow:1px 1px 0 #f9ca24, 2px 2px 0 #e67e22; font-family:'Segoe UI', Arial, sans-serif;">🎭 {show_name} 🎶</h2>
+            <ul style="list-style:none; padding-left:0; font-size:1.05em;">
+                <li style="margin-bottom:8px;"><strong style="color:#8e44ad;">First Preview:</strong> <span style="color:#2d3436;">{first_preview}</span></li>
+                <li style="margin-bottom:8px;"><strong style="color:#16a085;">Opening Night:</strong> <span style="color:#2d3436;">{opening_night}</span></li>
+                <li style="margin-bottom:8px;"><strong style="color:#d35400;">Closing Night:</strong> <span style="color:#2d3436;">{closing_night}</span></li>
+                <li style="margin-bottom:8px;"><strong style="color:#2980b9;">Venue:</strong> <a href="{venue_url}" style="color:#e84393; font-weight:bold; text-decoration:underline;">{venue_name}</a></li>
+                <li><strong style="color:#e67e22;">More Info:</strong> <a href="{info_url}" style="color:#27ae60; font-weight:bold; background:#fff3e0; padding:4px 10px; border-radius:6px; text-decoration:none; box-shadow:1px 1px 0 #e67e22;">Show Page</a></li>
+            </ul>
+        </div>
+        """
+    return result,html_result
 
 
 def get_show_page(show_name: str) -> str:
@@ -263,7 +275,7 @@ def get_info_page(info_url: str) -> str:
     return requests.get(info_url, timeout=30).text
 
 
-def search_shows(shows: List[str]) -> str:
+def search_shows(shows: List[str]) -> Tuple[str, str]:
     """
     Searches for each show in the provided list, extracts info URLs, and compiles the information.
 
@@ -274,6 +286,7 @@ def search_shows(shows: List[str]) -> str:
         str: A compiled string of extracted show information for all shows.
     """
     result: str = ""
+    html_aggregate: str = ""
     for show_name in shows:
         print(f'[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\
                searching show {show_name}...')
@@ -281,16 +294,40 @@ def search_shows(shows: List[str]) -> str:
         info_urls: List[str] = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
             show_info_page_html: str = get_info_page(info_url)
-            result += extract_details_from_info_page(show_name, show_info_page_html)
-    return result
+            text_result, html_result = extract_details_from_info_page(show_name, show_info_page_html)
+            result += text_result
+            html_aggregate += html_result
+    html_report = (
+            "<!DOCTYPE html>\n"
+            "<html lang='en'>\n"
+            "<head>\n"
+            "  <meta charset='UTF-8'>\n"
+            "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n"
+            "  <title>Sondheim Shows Weekly Report</title>\n"
+            "</head>\n"
+            "<body style='background:#f4f6f8; margin:0; padding:32px;'>\n"
+            f"{html_aggregate}\n"
+            "</body>\n"
+            "</html>\n"
+        )
+    return result,html_report
 
 def test_flow() -> None:
     """
     full flow
     """
-    result: str = search_shows(SHOWS)
-    print()
+    result_tuple: Tuple[str,str] = search_shows(SHOWS)
+    result, html_report = result_tuple
+    filename = f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.html"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(html_report)
+    print(f"HTML report saved to {filename}")
+
+    print('-'*30)
+    print(html_report)
+    print('-'*30)
     print(result)
+    print('-'*30)
 
 
 if __name__ == "__main__":

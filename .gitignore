@@ -1,6 +1,7 @@
 # Virtual environments
 venv_theatre_alert
 obs
+2025*.html
 
 # Python
 __pycache__/
