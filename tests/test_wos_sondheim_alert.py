@@ -1,12 +1,12 @@
 import os
 import sys
 
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+project_root = os.path.dirname(os.path.dirname(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
-script_path = os.path.dirname(__file__)
-if script_path not in sys.path:
-    sys.path.insert(0, script_path)
+netlify_functions__path = os.path.join(project_root, 'netlify/functions')
+if netlify_functions__path not in sys.path:
+    sys.path.insert(0, netlify_functions__path)
 import datetime
 
 from wos_sondheim_alert import extract_info_links, extract_details_from_info_page, search_shows
@@ -46,7 +46,7 @@ def test_flow() -> None:
     print(result)
     print("-" * 30)
     print(f"HTML report saved to {filename}")
-    print("-" * 30)
+
 
 if __name__ == "__main__":
     test_flow()

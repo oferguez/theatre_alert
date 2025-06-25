@@ -9,10 +9,6 @@
   "pylint.args": [
     "\"pylint.args\": [\"--disable=fixme,C0301\"]"
   ],
-  // "terminal.integrated.shellArgs.linux": [
-  //   "-c",
-  //   "source {path_to_virtualenv}/bin/activate; bash"
-  // ],
 
   "terminal.integrated.profiles.linux": {
     "Ubuntu": { // This should match the 'NAME' of your WSL distro (e.g., 'Ubuntu', 'Debian', etc.)
@@ -26,5 +22,8 @@
       "icon": "terminal-ubuntu"
     }
   },
-  "terminal.integrated.defaultProfile.windows": "Ubuntu"
+  "terminal.integrated.defaultProfile.windows": "Ubuntu",
+  "python.analysis.extraPaths": [
+    "./netlify/functions"
+  ]
 }

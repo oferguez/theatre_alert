@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 import re
 import requests
 from wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
+from wos_constants import QUERY_URL_TEMPLATE
 
 
 def extract_info_links(html_content: str, show_name: str) -> List[str]:
@@ -46,6 +47,7 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
             continue
         article_title = article_title_tag.get_text(strip=True)
         if article_title.strip().lower() != show_name.strip().lower():
+            print(f"skipping: {article_title}")
             continue
         more_info_links_in_article = article.find_all("a", class_="buy-tickets-link")
         for link in more_info_links_in_article:
@@ -55,6 +57,10 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
                 if href:
                     more_info_urls.append(href)
                 break
+    if more_info_urls:
+        print(f"found {len(more_info_urls)} show info links: {more_info_urls}")
+    else:
+        print("no show info links")
     return more_info_urls
 
 
@@ -154,7 +160,7 @@ def get_show_page(show_name: str) -> str:
     Returns:
         str: The HTML content of the search results page.
     """
-    query_url = f"https://www.whatsonstage.com/?s={show_name.replace(' ','+')}"
+    query_url = QUERY_URL_TEMPLATE.format(show_name=show_name.replace(' ', '+'))
     show_page = requests.get(query_url, timeout=30).text
     return show_page
 

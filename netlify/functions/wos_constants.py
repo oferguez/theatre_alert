@@ -30,7 +30,7 @@ SHOWS: List[str] = [
     "Hot Spot",
 ]
 
-HTML_TEMPLATE: str = '''
+HTML_TEMPLATE: str = """
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -42,9 +42,9 @@ HTML_TEMPLATE: str = '''
 {content}
 </body>
 </html>
-'''
+"""
 
-HTML_SHOW_TEMPLATE: str = '''
+HTML_SHOW_TEMPLATE: str = """
     <div style="border:3px solid #e67e22; border-radius:16px; padding:24px; margin-bottom:32px; font-family:'Segoe UI', 'Arial', 'Helvetica Neue', Arial, sans-serif; background:linear-gradient(135deg,#fffbe6 0%,#ffe0b2 100%); box-shadow:0 4px 24px rgba(230,126,34,0.15);">
         <h2 style="margin-top:0; color:#c0392b; font-size:2em; letter-spacing:1px; text-shadow:1px 1px 0 #f9ca24, 2px 2px 0 #e67e22; font-family:'Segoe UI', Arial, sans-serif;">🎭 {show_name} 🎶</h2>
         <ul style="list-style:none; padding-left:0; font-size:1.05em;">
@@ -55,4 +55,6 @@ HTML_SHOW_TEMPLATE: str = '''
             <li><strong style="color:#e67e22;">More Info:</strong> <a href="{info_url}" style="color:#27ae60; font-weight:bold; background:#fff3e0; padding:4px 10px; border-radius:6px; text-decoration:none; box-shadow:1px 1px 0 #e67e22;">Show Page</a></li>
         </ul>
     </div>
-'''
+"""
+
+QUERY_URL_TEMPLATE: str = "https://www.whatsonstage.com/?s={show_name}"
