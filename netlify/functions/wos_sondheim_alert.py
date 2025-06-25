@@ -2,6 +2,7 @@
 search WhatsOnStage.com for all Sondheim shows,
 extract info for each and compile a weekly email report
 """
+
 import os
 import sys
 
@@ -64,7 +65,9 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
     return more_info_urls
 
 
-def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> Tuple[str, str]:
+def extract_details_from_info_page(
+    show_name: str, show_info_page_html: str
+) -> Tuple[str, str]:
     """
     Formats and returns details for a show from its info page HTML.
 
@@ -145,7 +148,7 @@ def extract_details_from_info_page(show_name: str, show_info_page_html: str) -> 
         closing_night=closing_night,
         venue_name=venue_name,
         venue_url=venue_url,
-        info_url=info_url
+        info_url=info_url,
     )
     return result, html_result
 
@@ -160,7 +163,7 @@ def get_show_page(show_name: str) -> str:
     Returns:
         str: The HTML content of the search results page.
     """
-    query_url = QUERY_URL_TEMPLATE.format(show_name=show_name.replace(' ', '+'))
+    query_url = QUERY_URL_TEMPLATE.format(show_name=show_name.replace(" ", "+"))
     show_page = requests.get(query_url, timeout=30).text
     return show_page
 
@@ -213,7 +216,4 @@ def handle(event, context):
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """
     result, html_report = search_shows(SHOWS)
-    return {
-        "statusCode": 200,
-        "body": html_report
-    }
+    return {"statusCode": 200, "body": html_report}
