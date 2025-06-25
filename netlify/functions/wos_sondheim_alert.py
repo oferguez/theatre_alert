@@ -269,5 +269,7 @@ def handle(event, context):
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """
     result, html_report = search_shows(SHOWS)
-    send_email(subject="Sondheim WhatsOnStage Weekly Report", html_body=html_report)
+    (status_code, response_json) = send_email(
+        subject="Sondheim WhatsOnStage Weekly Report", html_body=html_report
+    )
     return {"statusCode": 200, "body": html_report}
