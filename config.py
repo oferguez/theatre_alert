@@ -18,14 +18,13 @@ class Config:  # pylint: disable=too-few-public-methods
 
     def __init__(self) -> None:
         """Initialize configuration from environment variables."""
-        self.max_venues = int(os.getenv("MAX_VENUES", "3"))
-        self.user_location = os.getenv("USER_LOCATION", "London, UK")
-        self.author_name = os.getenv("AUTHOR_NAME", "Sondheim")
-        self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
         self.email_recipient = os.getenv("EMAIL_RECIPIENT", "")
         self.email_sender = os.getenv("EMAIL_SENDER", "")
-        self.sendgrid_api_key = os.getenv("SENDGRID_API_KEY", "")
+        self.mailjet_api_key = os.getenv("MAILJET_API_KEY", "")
+        self.mailjet_secret = os.getenv("MAILJET_SECRET_KEY", "")
+        # future use maybe sometime somewhere
         self.google_places_api_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
+        self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
 
     def validate(self) -> bool:
         """
@@ -40,8 +39,8 @@ class Config:  # pylint: disable=too-few-public-methods
         required_fields = [
             "email_recipient",
             "email_sender",
-            "sendgrid_api_key",
-            "author_name",
+            "mailjet_api_key",
+            "mailjet_secret",
         ]
 
         for field in required_fields:

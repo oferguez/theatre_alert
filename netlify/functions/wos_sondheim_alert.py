@@ -20,8 +20,8 @@ import re
 import requests
 from wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
 from wos_constants import QUERY_URL_TEMPLATE
-from config import Config
-from email_sender import Email
+from config import config
+from mailjet_rest import Client
 
 
 def extract_info_links(html_content: str, show_name: str) -> List[str]:
@@ -213,17 +213,55 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     return result, html_report
 
 
-def send_email(subject: str, html_body: str, config: Config):
-    email = Email(
-        smtp_server=config.SMTP_SERVER,
-        smtp_port=config.SMTP_PORT,
-        username=config.SMTP_USERNAME,
-        password=config.SMTP_PASSWORD,
-        from_addr=config.FROM_EMAIL,
-        to_addrs=config.TO_EMAILS,
+# def send_email__(subject: str, html_body: str, config: Config):
+
+#     message = Mail(
+#         from_email=config.email_sender,
+#         to_emails=config.email_recipient,
+#         subject=f"Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}",
+#         html_content=html_body,
+#     )
+#     try:
+#         sg = SendGridAPIClient(config.sendgrid_api_key)
+#         response = sg.send(message)
+#         print(f"SendGrid response: {response.status_code}")
+#     except Exception as e:
+#         print(f"SendGrid error: {e}")
+
+
+def send_email(subject: str, html_body: str):
+    #    def send_email_via_mailjet(api_key, secret_key, recipient_email, html_body):
+    """
+    Sends an email using Mailjet API
+
+    Args:
+        subject (str): sibject line
+        html_body (str): HTML content for the email body
+
+    Returns:
+        tuple: (status_code, response_json)
+    """
+
+    mailjet = Client(
+        auth=(config.mailjet_api_key, config.mailjet_secret), version="v3.1"
     )
-    email.send(subject=subject, html_body=html_body)
-    pass
+
+    email_data = {
+        "Messages": [
+            {
+                "From": {
+                    "Email": config.email_sender,
+                    "Name": "Sondheim Alert",
+                },
+                "To": [{"Email": config.email_recipient, "Name": "Recipient"}],
+                "Subject": subject,
+                "HTMLPart": html_body,
+            }
+        ]
+    }
+
+    response = mailjet.send.create(data=email_data)
+    return response.status_code, response.json()
 
 
 def handle(event, context):
@@ -231,9 +269,5 @@ def handle(event, context):
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """
     result, html_report = search_shows(SHOWS)
-    send_email(
-        subject="Sondheim WhatsOnStage Weekly Report",
-        html_body=html_report,
-        config=Config,
-    )
+    send_email(subject="Sondheim WhatsOnStage Weekly Report", html_body=html_report)
     return {"statusCode": 200, "body": html_report}
