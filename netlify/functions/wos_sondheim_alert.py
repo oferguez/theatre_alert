@@ -20,6 +20,8 @@ import re
 import requests
 from wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
 from wos_constants import QUERY_URL_TEMPLATE
+from config import Config
+from email_sender import Email
 
 
 def extract_info_links(html_content: str, show_name: str) -> List[str]:
@@ -211,9 +213,27 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     return result, html_report
 
 
+def send_email(subject: str, html_body: str, config: Config):
+    email = Email(
+        smtp_server=config.SMTP_SERVER,
+        smtp_port=config.SMTP_PORT,
+        username=config.SMTP_USERNAME,
+        password=config.SMTP_PASSWORD,
+        from_addr=config.FROM_EMAIL,
+        to_addrs=config.TO_EMAILS,
+    )
+    email.send(subject=subject, html_body=html_body)
+    pass
+
+
 def handle(event, context):
     """
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """
     result, html_report = search_shows(SHOWS)
+    send_email(
+        subject="Sondheim WhatsOnStage Weekly Report",
+        html_body=html_report,
+        config=Config,
+    )
     return {"statusCode": 200, "body": html_report}

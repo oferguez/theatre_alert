@@ -4,7 +4,8 @@
   "python.analysis.typeCheckingMode": "off",
   "python.analysis.autoImportCompletions": true,
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
   },
   "pylint.args": [
     "\"pylint.args\": [\"--disable=fixme,C0301\"]"
