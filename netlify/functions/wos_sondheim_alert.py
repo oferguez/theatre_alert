@@ -24,7 +24,7 @@ from config import config
 from mailjet_rest import Client
 
 
-def extract_info_links(html_content: str, show_name: str) -> List[str]:
+def extract_info_links(html_content: str, show_name: str) -> Tuple[List[str], str]:
     """
     Extracts 'More Info' links for a specific show from WhatsOnStage search results HTML.
 
@@ -34,7 +34,9 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
 
     Returns:
         List[str]: A list of URLs for the 'More Info' buttons related to the specified show.
+        str: log
     """
+    log = ""
     soup = BeautifulSoup(html_content, "html.parser")
     search_results_container = soup.find("div", id="search-results-container")
     if not search_results_container:
@@ -50,7 +52,7 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
             continue
         article_title = article_title_tag.get_text(strip=True)
         if article_title.strip().lower() != show_name.strip().lower():
-            print(f"skipping: {article_title}")
+            log += f"skipping: {article_title}"
             continue
         more_info_links_in_article = article.find_all("a", class_="buy-tickets-link")
         for link in more_info_links_in_article:
@@ -61,10 +63,10 @@ def extract_info_links(html_content: str, show_name: str) -> List[str]:
                     more_info_urls.append(href)
                 break
     if more_info_urls:
-        print(f"found {len(more_info_urls)} show info links: {more_info_urls}")
+        log += f"found {len(more_info_urls)} show info links: {more_info_urls}"
     else:
-        print("no show info links")
-    return more_info_urls
+        log += "no show info links"
+    return more_info_urls, log
 
 
 def extract_details_from_info_page(
@@ -196,12 +198,12 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     result = ""
     html_aggregate = ""
     for show_name in shows:
-        print(
+        result += (
             f"[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]"
             f" searching show {show_name}..."
         )
         show_page_html = get_show_page(show_name)
-        info_urls = extract_info_links(show_page_html, show_name)
+        info_urls, log = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
             show_info_page_html = get_info_page(info_url)
             text_result, html_result = extract_details_from_info_page(
@@ -210,6 +212,7 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
             result += text_result
             html_aggregate += html_result
     html_report = HTML_TEMPLATE.format(content=html_aggregate)
+    result += log
     return result, html_report
 
 
@@ -245,6 +248,7 @@ def send_email(subject: str, html_body: str):
     mailjet = Client(
         auth=(config.mailjet_api_key, config.mailjet_secret), version="v3.1"
     )
+    # print(f"Mailjet auth: key={config.mailjet_api_key}, secret={config.mailjet_secret}")
 
     email_data = {
         "Messages": [

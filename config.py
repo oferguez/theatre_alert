@@ -53,3 +53,4 @@ class Config:  # pylint: disable=too-few-public-methods
 
 
 config = Config()
+config.validate()
