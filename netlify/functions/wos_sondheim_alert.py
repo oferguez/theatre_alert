@@ -13,7 +13,7 @@ script_path = os.path.dirname(__file__)
 if script_path not in sys.path:
     sys.path.insert(0, script_path)
 
-import datetime
+from datetime import datetime
 from typing import List, Tuple
 from bs4 import BeautifulSoup
 import re
@@ -197,7 +197,7 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     html_aggregate = ""
     for show_name in shows:
         print(
-            f"[{datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]}]"
+            f"[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]"
             f" searching show {show_name}..."
         )
         show_page_html = get_show_page(show_name)
@@ -270,6 +270,7 @@ def handle(event, context):
     """
     result, html_report = search_shows(SHOWS)
     (status_code, response_json) = send_email(
-        subject="Sondheim WhatsOnStage Weekly Report", html_body=html_report
+        subject=f"Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}",
+        html_body=html_report,
     )
-    return {"statusCode": 200, "body": html_report}
+    return {"statusCode": status_code, "body": response_json, "log": result}

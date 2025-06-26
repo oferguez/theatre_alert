@@ -1,6 +1,12 @@
 import os
+from pprint import PrettyPrinter
 import sys
 import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# from tkinter import N
 
 project_root = os.path.dirname(os.path.dirname(__file__))
 if project_root not in sys.path:
@@ -13,6 +19,7 @@ from wos_sondheim_alert import (
     extract_info_links,
     extract_details_from_info_page,
     search_shows,
+    handle,
 )
 from wos_constants import SHOWS
 import subprocess
@@ -63,4 +70,5 @@ def test_flow() -> None:
 
 
 if __name__ == "__main__":
-    test_flow()
+    result = handle(None, None)  # Call the handle function to run the tests
+    PrettyPrinter().pprint(result)
