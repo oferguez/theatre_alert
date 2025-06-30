@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# from tkinter import N
-
 from netlify.functions.wos_sondheim_alert import (
     extract_info_links,
     extract_details_from_info_page,
