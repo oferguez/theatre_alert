@@ -20,14 +20,14 @@ jobs:
       with:
         fetch-depth: 10
 
-    - name: Automatic PR Review
-      uses: anthropics/claude-code-action@v0.0.17
-      with:
-        anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        timeout_minutes: "60"
-        direct_prompt: |
-          Please review this pull request and provide comprehensive feedback.
+      - name: Automatic PR Review
+        uses: anthropics/claude-code-action@v0.0.25
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          timeout_minutes: "60"
+          direct_prompt: |
+            Please review this pull request and provide comprehensive feedback.
 
           Focus on:
           - Code quality and best practices
