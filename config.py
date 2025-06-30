@@ -19,6 +19,7 @@ class Config:  # pylint: disable=too-few-public-methods
     def __init__(self) -> None:
         """Initialize configuration from environment variables."""
         self.email_recipient = os.getenv("EMAIL_RECIPIENT", "")
+        self.email_recipient_2 = os.getenv("EMAIL_RECIPIENT_2", "")
         self.email_sender = os.getenv("EMAIL_SENDER", "")
         self.mailjet_api_key = os.getenv("MAILJET_API_KEY", "")
         self.mailjet_secret = os.getenv("MAILJET_SECRET_KEY", "")

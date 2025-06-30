@@ -216,22 +216,6 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     return result, html_report
 
 
-# def send_email__(subject: str, html_body: str, config: Config):
-
-#     message = Mail(
-#         from_email=config.email_sender,
-#         to_emails=config.email_recipient,
-#         subject=f"Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}",
-#         html_content=html_body,
-#     )
-#     try:
-#         sg = SendGridAPIClient(config.sendgrid_api_key)
-#         response = sg.send(message)
-#         print(f"SendGrid response: {response.status_code}")
-#     except Exception as e:
-#         print(f"SendGrid error: {e}")
-
-
 def send_email(subject: str, html_body: str):
     #    def send_email_via_mailjet(api_key, secret_key, recipient_email, html_body):
     """
@@ -248,7 +232,10 @@ def send_email(subject: str, html_body: str):
     mailjet = Client(
         auth=(config.mailjet_api_key, config.mailjet_secret), version="v3.1"
     )
-    # print(f"Mailjet auth: key={config.mailjet_api_key}, secret={config.mailjet_secret}")
+
+    to_list = [{"Email": config.email_recipient, "Name": "Recipient"}]
+    if getattr(config, "email_recipient_2", ""):
+        to_list.append({"Email": config.email_recipient_2, "Name": "Recipient"})
 
     email_data = {
         "Messages": [
@@ -257,7 +244,7 @@ def send_email(subject: str, html_body: str):
                     "Email": config.email_sender,
                     "Name": "Sondheim Alert",
                 },
-                "To": [{"Email": config.email_recipient, "Name": "Recipient"}],
+                "To": to_list,
                 "Subject": subject,
                 "HTMLPart": html_body,
             }
