@@ -1,6 +1,5 @@
 import os
 from pprint import PrettyPrinter
-import sys
 import datetime
 from dotenv import load_dotenv
 
@@ -8,20 +7,13 @@ load_dotenv()
 
 # from tkinter import N
 
-project_root = os.path.dirname(os.path.dirname(__file__))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-netlify_functions_path = os.path.join(project_root, "netlify/functions")
-if netlify_functions_path not in sys.path:
-    sys.path.insert(0, netlify_functions_path)
-
-from wos_sondheim_alert import (
+from netlify.functions.wos_sondheim_alert import (
     extract_info_links,
     extract_details_from_info_page,
     search_shows,
     handle,
 )
-from wos_constants import SHOWS
+from netlify.functions.wos_constants import SHOWS
 import subprocess
 
 

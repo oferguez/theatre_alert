@@ -6,20 +6,13 @@ extract info for each and compile a weekly email report
 import os
 import sys
 
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-script_path = os.path.dirname(__file__)
-if script_path not in sys.path:
-    sys.path.insert(0, script_path)
-
 from datetime import datetime
 from typing import List, Tuple
 from bs4 import BeautifulSoup
 import re
 import requests
-from wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
-from wos_constants import QUERY_URL_TEMPLATE
+from .wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
+from .wos_constants import QUERY_URL_TEMPLATE
 from config import config
 from mailjet_rest import Client
 
