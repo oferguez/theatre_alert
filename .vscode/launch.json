@@ -19,7 +19,21 @@
             "program": "${workspaceFolder}/tests/test_email_sender.py",
             "console": "integratedTerminal",
             "args": ""
+        },
+        {
+            "name": "Debug Pytest Unit Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "--maxfail=1",
+                "--disable-warnings",
+                "--capture=no",
+                "--tb=short",
+                "--pdb",
+                "tests/unittests/test_wos_sondheim_alert.py"
+            ],
+            "console": "integratedTerminal"
         }
-
     ]
 }
