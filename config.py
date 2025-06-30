@@ -27,6 +27,17 @@ class Config:  # pylint: disable=too-few-public-methods
         self.google_places_api_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
         self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
 
+    def load_and_validate(self) -> "Config":
+        """
+        Load environment variables and validate required fields.
+
+        Raises:
+            ValueError: If any required environment variable is missing
+        """
+        if not self.validate():
+            raise ValueError("Configuration validation failed")
+        return self
+
     def validate(self) -> bool:
         """
         Validate that all required configuration values are present.
@@ -51,7 +62,3 @@ class Config:  # pylint: disable=too-few-public-methods
                 )
 
         return True
-
-
-config = Config()
-config.validate()

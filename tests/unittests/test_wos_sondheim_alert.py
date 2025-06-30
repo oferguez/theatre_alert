@@ -70,7 +70,7 @@ def test_search_shows(monkeypatch, show_name, html_with_link, html_info_page):
         return html_with_link
 
     def fake_get_info_page(url):
-        return html_info_page
+        return html_info_page, ""
 
     monkeypatch.setattr(wos_sondheim_alert, "get_show_page", fake_get_show_page)
     monkeypatch.setattr(wos_sondheim_alert, "get_info_page", fake_get_info_page)

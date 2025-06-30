@@ -4,16 +4,17 @@ extract info for each and compile a weekly email report
 """
 
 import os
-import sys
 
 from datetime import datetime
 from typing import List, Tuple
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 import re
 import requests
+
+import config
 from .wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
 from .wos_constants import QUERY_URL_TEMPLATE
-from config import config
+from config import Config
 from mailjet_rest import Client
 
 
@@ -33,7 +34,7 @@ def extract_info_links(html_content: str, show_name: str) -> Tuple[List[str], st
     soup = BeautifulSoup(html_content, "html.parser")
     search_results_container = soup.find("div", id="search-results-container")
     if not search_results_container:
-        return []
+        return [], "search results container not found"
     articles = search_results_container.find_all("article", class_="col-12")
     more_info_urls: List[str] = []
     for article in articles:
@@ -82,6 +83,7 @@ def extract_details_from_info_page(
     venue_name = "N/A"
     venue_url = "N/A"
     info_url = "N/A"
+    result = ""
     try:
         canonical_link = soup.find("link", rel="canonical")
         if canonical_link and canonical_link.get("href"):
@@ -90,6 +92,8 @@ def extract_details_from_info_page(
             og_url = soup.find("meta", property="og:url")
             if og_url and og_url.get("content"):
                 info_url = og_url["content"]
+    except FeatureNotFound as e:
+        result += f"Feature not found: {e}"
     except Exception:
         pass
     try:
@@ -116,6 +120,8 @@ def extract_details_from_info_page(
                 closing_night = closing_night_p_tag.text.strip().replace(
                     "Closing Night", ""
                 )
+    except FeatureNotFound as e:
+        result += f"Feature not found: {e}"
     except Exception:
         pass
     try:
@@ -127,9 +133,11 @@ def extract_details_from_info_page(
                 if venue_link_tag:
                     venue_name = venue_link_tag.get_text(strip=True)
                     venue_url = venue_link_tag.get("href")
+    except FeatureNotFound as e:
+        result += f"Feature not found: {e}"
     except Exception:
         pass
-    result = (
+    result += (
         f"show: {show_name}"
         + f" first preview: {first_preview} "
         + f" date: {opening_night} to {closing_night}"
@@ -165,7 +173,7 @@ def get_show_page(show_name: str) -> str:
     return show_page
 
 
-def get_info_page(info_url: str) -> str:
+def get_info_page(info_url: str) -> Tuple[str, str]:
     """
     Retrieves the HTML content of a show's info page from WhatsOnStage.
 
@@ -174,8 +182,15 @@ def get_info_page(info_url: str) -> str:
 
     Returns:
         str: The HTML content of the info page.
+        str: An error message if the request fails, otherwise an empty string.
     """
-    return requests.get(info_url, timeout=30).text
+
+    try:
+        response = requests.get(info_url, timeout=30)
+        response.raise_for_status()
+        return response.text, ""  # Return the HTML content and an empty error message
+    except requests.RequestException as e:
+        return "", f"Failed to fetch {info_url}: {e}"  # or raise based on requirements
 
 
 def search_shows(shows: List[str]) -> Tuple[str, str]:
@@ -198,10 +213,16 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
         show_page_html = get_show_page(show_name)
         info_urls, log = extract_info_links(show_page_html, show_name)
         for info_url in info_urls:
-            show_info_page_html = get_info_page(info_url)
-            text_result, html_result = extract_details_from_info_page(
-                show_name, show_info_page_html
-            )
+            show_info_page_html, errors = get_info_page(info_url)
+            if not errors:
+                text_result, html_result = extract_details_from_info_page(
+                    show_name, show_info_page_html
+                )
+            else:
+                text_result = f"Error fetching info page for {show_name}: {errors}"
+                html_result = (
+                    f"<p>Error fetching info page for {show_name}: {errors}</p>"
+                )
             result += text_result
             html_aggregate += html_result
     html_report = HTML_TEMPLATE.format(content=html_aggregate)
@@ -222,6 +243,7 @@ def send_email(subject: str, html_body: str):
         tuple: (status_code, response_json)
     """
 
+    config = Config().load_and_validate()
     mailjet = Client(
         auth=(config.mailjet_api_key, config.mailjet_secret), version="v3.1"
     )
