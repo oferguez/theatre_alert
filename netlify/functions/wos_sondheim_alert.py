@@ -169,8 +169,14 @@ def get_show_page(show_name: str) -> str:
         str: The HTML content of the search results page.
     """
     query_url = QUERY_URL_TEMPLATE.format(show_name=show_name.replace(" ", "+"))
-    show_page = requests.get(query_url, timeout=30).text
-    return show_page
+
+    try:
+        response = requests.get(query_url, timeout=30)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        # Handle error appropriately
+        return ""
 
 
 def get_info_page(info_url: str) -> Tuple[str, str]:

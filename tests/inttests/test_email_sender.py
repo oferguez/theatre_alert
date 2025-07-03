@@ -8,7 +8,7 @@ from netlify.functions.wos_sondheim_alert import send_email
 
 
 def test_send_email():
-    with open("tests/inttest/sample_report.html", "r", encoding="utf-8") as f:
+    with open("tests/inttests/sample_report.html", "r", encoding="utf-8") as f:
         html_content_from_file = f.read()
     subject = f"TEST Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}"
     (status_code, response_json) = send_email(

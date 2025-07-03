@@ -16,7 +16,14 @@ class Config:  # pylint: disable=too-few-public-methods
     system, including API keys, user preferences, and email settings.
     """
 
-    def __init__(self) -> None:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def _load(self) -> None:
         """Initialize configuration from environment variables."""
         self.email_recipient = os.getenv("EMAIL_RECIPIENT", "")
         self.email_recipient_2 = os.getenv("EMAIL_RECIPIENT_2", "")
@@ -27,18 +34,7 @@ class Config:  # pylint: disable=too-few-public-methods
         self.google_places_api_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
         self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
 
-    def load_and_validate(self) -> "Config":
-        """
-        Load environment variables and validate required fields.
-
-        Raises:
-            ValueError: If any required environment variable is missing
-        """
-        if not self.validate():
-            raise ValueError("Configuration validation failed")
-        return self
-
-    def validate(self) -> bool:
+    def _validate(self) -> bool:
         """
         Validate that all required configuration values are present.
 
@@ -62,3 +58,15 @@ class Config:  # pylint: disable=too-few-public-methods
                 )
 
         return True
+
+    def load_and_validate(self) -> "Config":
+        """
+        Load environment variables and validate required fields.
+
+        Raises:
+            ValueError: If any required environment variable is missing
+        """
+        self._load()
+        if not self._validate():
+            raise ValueError("Configuration validation failed")
+        return self

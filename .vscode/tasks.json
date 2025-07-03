@@ -24,6 +24,27 @@
 					}
 				}
 			]
+		},
+		{
+			"label": "Integration Test: test_config.py",
+			"type": "shell",
+			"command": "venv_theatre_alert/bin/python -m tests.inttests.test_config",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Integration Test: test_email_sender.py",
+			"type": "shell",
+			"command": "venv_theatre_alert/bin/python -m tests.inttests.test_email_sender",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Integration Test: test_wos_sondheim_alert.py",
+			"type": "shell",
+			"command": "venv_theatre_alert/bin/python -m tests.inttests.test_wos_sondheim_alert",
+			"group": "test",
+			"problemMatcher": []
 		}
 	]
 }

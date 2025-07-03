@@ -8,16 +8,18 @@ A serverless Python application that runs daily on Netlify to find Sondheim prod
 project_root/
 ├── netlify/
 │   └── functions/
-│       ├── wos_sondheim_alert.py   # Main logic: scraping, parsing, reporting
+│       ├── wos_sondheim_alert.py   # Main logic: scraping, parsing, reporting, email
 │       ├── wos_constants.py        # Show list, HTML templates, query templates
 │       └── ...
 ├── obs/                            # Output HTML reports and logs
 ├── tests/
-│   ├── inttest/                    # Integration tests (end-to-end, real HTML)
-│   │   └── test_wos_sondheim_alert.py
+│   ├── inttests/                   # Integration tests (end-to-end, real HTML)
+│   │   ├── test_wos_sondheim_alert.py
+│   │   └── test_config.py          # Integration test for config
+│   │   └── test_email_sender.py    # Integration test for email sending
 │   └── unittests/                  # Unit tests (mocked HTML, no network)
 │       └── test_wos_sondheim_alert.py
-├── config.py                       # Configuration loading/validation
+├── config.py                       # Configuration loading/validation (singleton pattern)
 ├── requirements.txt                # Python dependencies
 ├── README.md                       # This file
 └── ...
@@ -25,8 +27,9 @@ project_root/
 
 - **netlify/functions/**: All Netlify serverless function code and scraping logic.
 - **obs/**: Stores generated HTML reports and logs.
-- **tests/inttest/**: Integration tests that run the full flow, using real or large HTML files.
+- **tests/inttests/**: Integration tests that run the full flow, using real or large HTML files, or test config loading and email sending.
 - **tests/unittests/**: Unit tests for individual functions, using mocked HTML and monkeypatching network calls.
+- **config.py**: Singleton config loader/validator, used everywhere as `from config import config`.
 
 ## How to Run Unit Tests
 
@@ -42,15 +45,18 @@ pytest tests/unittests/test_wos_sondheim_alert.py
 
 ## How to Run Integration Tests
 
-Integration tests are in `tests/inttests/` and use real HTML files and the full scraping flow:
+Integration tests are in `tests/inttests/` and use real HTML files and the full scraping flow, or test config loading and email sending:
 
 ```bash
 # From project root, with venv activated
 python -m tests.inttests.test_wos_sondheim_alert
+python -m tests.inttests.test_config
+python -m tests.inttests.test_email_sender
 ```
 
-- These tests may read from files in `obs/` and can exercise the full scraping and reporting pipeline.
+- These tests may read from files in `obs/` and can exercise the full scraping, reporting, and email pipeline.
 - You can also run other integration tests in this folder similarly.
+- You can run the config integration test from VS Code using the task: "Integration Test: test_config.py".
 
 ## Manual Testing
 
@@ -70,12 +76,13 @@ curl -X POST https://your-site.netlify.app/.netlify/functions/theatre_alert \
 
 All parameters are configurable via environment variables:
 
-- `MAX_VENUES`: Maximum number of venues to return
-- `USER_LOCATION`: Your location for proximity search
-- `SEARCH_RADIUS_MILES`: Search radius in miles
 - `EMAIL_RECIPIENT`: Email address to receive notifications
+- `EMAIL_RECIPIENT_2`: (Optional) Second recipient
 - `EMAIL_SENDER`: Sender email address
-- `SENDGRID_API_KEY`: SendGrid API key for email sending
+- `MAILJET_API_KEY`: Mailjet API key for email sending
+- `MAILJET_SECRET_KEY`: Mailjet secret key for email sending
+- `GOOGLE_PLACES_API_KEY`: (Optional) For future venue search
+- `SEARCH_RADIUS_MILES`: Search radius in miles (default: 50)
 
 ## Scheduling
 
@@ -98,10 +105,10 @@ The service sends HTML emails with:
 
 ## Development
 
-To extend the venue search functionality:
-1. Implement real web scraping in `venue_finder.py`
-2. Add new theater websites to search
-3. Enhance the email template in `email_sender.py`
+- The main scraping, parsing, and email logic is in `netlify/functions/wos_sondheim_alert.py`.
+- Configuration is loaded and validated via the singleton in `config.py`.
+- Extend venue search by editing `venue_finder.py` (future use).
+- Add new tests in `tests/unittests/` (unit) or `tests/inttests/` (integration).
 
 ## License
 
