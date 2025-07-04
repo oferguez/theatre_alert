@@ -2,11 +2,11 @@
   functions = "netlify/functions"
 
 [functions]
-  python_version = "3.8"
+  python_version = "3.12.3"
 
 [[functions]]
   schedule = "0 9 * * *"  # Run daily at 9 AM UTC
-  name = "sondheim_alert"
+  name = "wos_sondheim_alert"
 
 [build.environment]
   PYTHONPATH = "/opt/buildhome/repo"

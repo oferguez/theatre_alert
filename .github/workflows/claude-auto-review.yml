@@ -1,12 +1,12 @@
 name: Claude Auto Review
 
 on:
-  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
   auto-review:
+    if: "!github.event.pull_request.draft"
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "TEST: wos_sondheim_alert.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/test_wos_sondheim_alert.py",
+            "console": "integratedTerminal",
+            "args": ""
+        },
+        {
+            "name": "TEST: send_email.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/test_email_sender.py",
+            "console": "integratedTerminal",
+            "args": ""
+        },
+        {
+            "name": "Debug Pytest Unit Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "--maxfail=1",
+                "--disable-warnings",
+                "--capture=no",
+                "--tb=short",
+                "--pdb",
+                "tests/unittests/test_wos_sondheim_alert.py"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}

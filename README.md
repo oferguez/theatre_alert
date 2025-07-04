@@ -1,76 +1,87 @@
-# Sondheim Alert
+# Theatre Alert
 
-A serverless Python application that runs daily on Netlify to find Stephen Sondheim productions near you and send email notifications.
+A serverless Python application that runs daily on Netlify to find Sondheim productions near you and send email notifications.
 
-## Features
+## Project Architecture
 
-- 🎭 Searches for current Stephen Sondheim productions
-- 📍 Finds venues within a configurable radius of your location
-- 📧 Sends email notifications with venue details
-- ⚙️ Fully configurable via environment variables
-- 🕐 Runs automatically daily or can be triggered manually
-- 🚀 Deploys easily to Netlify Functions
+```
+project_root/
+├── netlify/
+│   └── functions/
+│       ├── wos_sondheim_alert.py   # Main logic: scraping, parsing, reporting, email
+│       ├── wos_constants.py        # Show list, HTML templates, query templates
+│       └── ...
+├── tests/
+│   ├── inttests/                   # Integration tests (end-to-end, real HTML)
+│   │   ├── test_wos_sondheim_alert.py
+│   │   └── test_config.py          # Integration test for config
+│   │   └── test_email_sender.py    # Integration test for email sending
+│   └── unittests/                  # Unit tests (mocked HTML, no network)
+│       └── test_wos_sondheim_alert.py
+├── config.py                       # Configuration loading/validation (singleton pattern)
+├── requirements.txt                # Python dependencies
+├── README.md                       # This file
+└── ...
+```
 
-## Setup
+- **netlify/functions/**: All Netlify serverless function code and scraping logic.
+- **tests/inttests/**: Integration tests that run the full flow, using real or large HTML files, or test config loading and email sending.
+- **tests/unittests/**: Unit tests for individual functions, using mocked HTML and monkeypatching network calls.
+- **config.py**: Singleton config loader/validator, used everywhere as `from config import config`.
 
-1. **Clone and install dependencies:**
-   ```bash
-   git clone https://github.com/oferguez/theatre_alert.git
-   cd theatre_alert
-   python3 -m venv venv_theatre_alert
-   source ./venv_theatre_alert/bin/activate
-   pip install -r requirements.txt
-   ```
+## How to Run Unit Tests
 
-2. **Configure environment variables:**
-   Copy `.env.example` to `.env` and fill in your values:
-   ```bash
-   cp .env.example .env
-   ```
+Unit tests are in `tests/unittests/` and use `pytest`:
 
-   Required variables:
-   - `EMAIL_RECIPIENT`: Your email address
-   - `EMAIL_SENDER`: Sender email address  
-   - `SENDGRID_API_KEY`: Your SendGrid API key
+```bash
+# From project root, with venv activated
+pytest tests/unittests/test_wos_sondheim_alert.py
+```
 
-   Optional variables:
-   - `MAX_VENUES`: Number of venues to find (default: 3)
-   - `USER_LOCATION`: Your location (default: New York, NY)
-   - `SEARCH_RADIUS_MILES`: Search radius in miles (default: 50)
+- These tests use fixtures and monkeypatching to avoid real network calls.
+- You can debug with VS Code using the provided launch configuration: "Debug Pytest Unit Tests".
 
-3. **Deploy to Netlify:**
-   - Connect your repository to Netlify
-   - Set environment variables in Netlify dashboard
-   - Deploy - the function will run daily automatically
+## How to Run Integration Tests
 
-4. Python Version: Python 3.12.3
+Integration tests are in `tests/inttests/` and use real HTML files and the full scraping flow, or test config loading and email sending:
 
+```bash
+# From project root, with venv activated
+python -m tests.inttests.test_wos_sondheim_alert
+python -m tests.inttests.test_config
+python -m tests.inttests.test_email_sender
+```
 
+- These tests may read from files in the tests folder and can exercise the full scraping, reporting, and email pipeline.
+- You can also run other integration tests in this folder similarly.
+- You can run the config integration test from VS Code using the task: "Integration Test: test_config.py".
 
 ## Manual Testing
 
+Unittests:
+```bash
+pytest -v tests/unittests/test_unit_wos_sondheim_alert.py
+```
+
 Test the function locally:
 ```bash
-python netlify/functions/sondheim_alert.py
+python3 -m tests.inttests.test_wos_sondheim_alert",
 ```
 
 Test via HTTP (after deployment):
 ```bash
-curl -X POST https://your-site.netlify.app/.netlify/functions/sondheim_alert \
-  -H "Content-Type: application/json" \
-  -d '{"user_location": "Los Angeles, CA", "max_venues": 5}'
+curl -X POST https://your-site.netlify.app/.netlify/functions/wos_sondheim_alert
 ```
 
 ## Configuration
 
 All parameters are configurable via environment variables:
 
-- `MAX_VENUES`: Maximum number of venues to return
-- `USER_LOCATION`: Your location for proximity search
-- `SEARCH_RADIUS_MILES`: Search radius in miles
 - `EMAIL_RECIPIENT`: Email address to receive notifications
+- `EMAIL_RECIPIENT_2`: (Optional) Second recipient
 - `EMAIL_SENDER`: Sender email address
-- `SENDGRID_API_KEY`: SendGrid API key for email sending
+- `MAILJET_API_KEY`: Mailjet API key for email sending
+- `MAILJET_SECRET_KEY`: Mailjet secret key for email sending
 
 ## Scheduling
 
@@ -79,7 +90,7 @@ The function runs daily at 9 AM UTC by default. Modify the schedule in `netlify.
 ```toml
 [[functions]]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
-  name = "sondheim_alert"
+  name = "wos_sondheim_alert"
 ```
 
 ## Email Format
@@ -93,11 +104,6 @@ The service sends HTML emails with:
 
 ## Development
 
-To extend the venue search functionality:
-1. Implement real web scraping in `venue_finder.py`
-2. Add new theater websites to search
-3. Enhance the email template in `email_sender.py`
-
-## License
-
-MIT License
+- The main scraping, parsing, and email logic is in `netlify/functions/wos_sondheim_alert.py`.
+- Configuration is loaded and validated via the singleton in `config.py`.
+- Add new tests in `tests/unittests/` (unit) or `tests/inttests/` (integration).

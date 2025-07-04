@@ -1,0 +1,30 @@
+// Let Pylance handles IntelliSense only while Pylint handles all diagnostics.
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/venv_theatre_alert/bin/python",
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.autoImportCompletions": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "pylint.args": [
+    "\"pylint.args\": [\"--disable=fixme,C0301\"]"
+  ],
+
+  "terminal.integrated.profiles.linux": {
+    "Ubuntu": { // This should match the 'NAME' of your WSL distro (e.g., 'Ubuntu', 'Debian', etc.)
+      "path": "wsl.exe",
+      "args": [
+        "-e", // Execute the command after the -e flag
+        "bash",
+        "-c", // Pass the command to bash's -c option
+        "source ${path_to_virtualenv}/bin/activate; bash" // Your actual command
+      ],
+      "icon": "terminal-ubuntu"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Ubuntu",
+  "python.analysis.extraPaths": [
+    "./netlify/functions"
+  ]
+}
