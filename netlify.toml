@@ -1,19 +1,28 @@
 [build]
+  # Define the directory where your serverless functions are located.
+  # This is crucial for Netlify to find and deploy them.
   functions = "netlify/functions"
 
+  # This command runs BEFORE Netlify bundles your functions.
+  # It ensures 'config.py' is copied into the functions directory,
+  # making it accessible to 'wos_sondheim_alert.py' during runtime.
+  command = "mkdir -p netlify/functions && cp config.py netlify/functions/"
+
+  # The 'publish' directory is where Netlify expects to find your static site assets.
+  # If you only have functions and no static site, you still need to specify one.
+  # Pointing it to the functions directory itself is a common workaround for function-only repos.
+  publish = "netlify/functions" 
+
+
 [functions]
-  python_version = "3.12.3"
+  # Environment variables specific to the FUNCTIONS runtime.
+  # This is the correct place to set the Python version for your functions.
+  environment = { PYTHON_VERSION = "3.12" } # Use "3.12" or "3.12.3" if Netlify supports minor versions explicitly.
+                                            # "3.12" is generally safer.
 
+# This defines a scheduled function.
+# The 'name' here MUST match the filename of your function (without the .py extension).
+# So, 'wos_sondheim_alert' corresponds to 'netlify/functions/wos_sondheim_alert.py'.
 [[functions]]
-  schedule = "0 9 * * *"  # Run daily at 9 AM UTC
-  name = "wos_sondheim_alert"
-
-[build]
-  # This command runs before Netlify tries to build and bundle your functions.
-  # It copies config.py into the functions directory.
-  # The '&&' ensures the functions directory is created if it somehow doesn't exist,
-  # though it should given your structure.
-  command = "mkdir -p netlify/functions && cp config.py netlify/functions/" 
-
-[build.environment]
-  PYTHONPATH = "/opt/buildhome/repo"
+  function = "wos_sondheim_alert" # Matches the filename wos_sondheim_alert.py
+  schedule = "0 9 * * *"          # Run daily at 9 AM UTC
