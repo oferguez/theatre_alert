@@ -23,6 +23,6 @@
 # This defines a scheduled function.
 # The 'name' here MUST match the filename of your function (without the .py extension).
 # So, 'wos_sondheim_alert' corresponds to 'netlify/functions/wos_sondheim_alert.py'.
-[[functions]]
-  function = "wos_sondheim_alert" # Matches the filename wos_sondheim_alert.py
+[[name]]
+  name = "wos_sondheim_alert" # Matches the filename wos_sondheim_alert.py
   schedule = "0 9 * * *"          # Run daily at 9 AM UTC
