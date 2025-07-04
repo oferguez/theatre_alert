@@ -25,7 +25,6 @@ project_root/
 ```
 
 - **netlify/functions/**: All Netlify serverless function code and scraping logic.
-- **obs/**: Stores generated HTML reports and logs.
 - **tests/inttests/**: Integration tests that run the full flow, using real or large HTML files, or test config loading and email sending.
 - **tests/unittests/**: Unit tests for individual functions, using mocked HTML and monkeypatching network calls.
 - **config.py**: Singleton config loader/validator, used everywhere as `from config import config`.
@@ -53,7 +52,7 @@ python -m tests.inttests.test_config
 python -m tests.inttests.test_email_sender
 ```
 
-- These tests may read from files in `obs/` and can exercise the full scraping, reporting, and email pipeline.
+- These tests may read from files in the tests folder and can exercise the full scraping, reporting, and email pipeline.
 - You can also run other integration tests in this folder similarly.
 - You can run the config integration test from VS Code using the task: "Integration Test: test_config.py".
 
@@ -71,9 +70,7 @@ python3 -m tests.inttests.test_wos_sondheim_alert",
 
 Test via HTTP (after deployment):
 ```bash
-curl -X POST https://your-site.netlify.app/.netlify/functions/theatre_alert \
-  -H "Content-Type: application/json" \
-  -d '{"user_location": "London, UK", "max_venues": 5}'
+curl -X POST https://your-site.netlify.app/.netlify/functions/wos_sondheim_alert
 ```
 
 ## Configuration
@@ -93,7 +90,7 @@ The function runs daily at 9 AM UTC by default. Modify the schedule in `netlify.
 ```toml
 [[functions]]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
-  name = "theatre_alert"
+  name = "wos_sondheim_alert"
 ```
 
 ## Email Format

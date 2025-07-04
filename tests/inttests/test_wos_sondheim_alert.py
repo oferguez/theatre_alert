@@ -20,7 +20,7 @@ def test_html_parser_show_page() -> None:
     Reads a local HTML file, extracts 'More Info' links for the show "The Frogs",
     and prints the result.
     """
-    with open("./obs/wos.html", "r", encoding="utf-8") as f:
+    with open("./wos.html", "r", encoding="utf-8") as f:
         html_content_from_file = f.read()
         result = extract_info_links(html_content_from_file, "The Frogs")
         print(f"result: {result}")
@@ -42,9 +42,7 @@ def test_flow() -> None:
     Full flow: runs the main search and prints/saves the HTML report.
     """
     result, html_report = search_shows(SHOWS)
-    filename = (
-        f"./obs/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.html"
-    )
+    filename = f"./{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_report)
     print("-" * 30)
