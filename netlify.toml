@@ -8,10 +8,12 @@
   schedule = "0 9 * * *"  # Run daily at 9 AM UTC
   name = "wos_sondheim_alert"
 
+[build]
+  # This command runs before Netlify tries to build and bundle your functions.
+  # It copies config.py into the functions directory.
+  # The '&&' ensures the functions directory is created if it somehow doesn't exist,
+  # though it should given your structure.
+  command = "mkdir -p netlify/functions && cp config.py netlify/functions/" 
+
 [build.environment]
   PYTHONPATH = "/opt/buildhome/repo"
-
-# Optional: If you want to override environment variables
-# [context.production.environment]
-#   MAX_VENUES = "3"
-#   SEARCH_RADIUS_MILES = "50"
