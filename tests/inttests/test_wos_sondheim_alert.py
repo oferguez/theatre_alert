@@ -3,8 +3,6 @@ from pprint import PrettyPrinter
 import datetime
 from dotenv import load_dotenv
 
-load_dotenv()
-
 from netlify.functions.wos_sondheim_alert import (
     extract_info_links,
     extract_details_from_info_page,
@@ -13,6 +11,8 @@ from netlify.functions.wos_sondheim_alert import (
 )
 from netlify.functions.wos_constants import SHOWS
 import subprocess
+
+load_dotenv()
 
 
 def test_html_parser_show_page() -> None:

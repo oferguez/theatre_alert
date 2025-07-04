@@ -11,7 +11,6 @@ project_root/
 │       ├── wos_sondheim_alert.py   # Main logic: scraping, parsing, reporting, email
 │       ├── wos_constants.py        # Show list, HTML templates, query templates
 │       └── ...
-├── obs/                            # Output HTML reports and logs
 ├── tests/
 │   ├── inttests/                   # Integration tests (end-to-end, real HTML)
 │   │   ├── test_wos_sondheim_alert.py
@@ -60,9 +59,14 @@ python -m tests.inttests.test_email_sender
 
 ## Manual Testing
 
+Unittests:
+```bash
+pytest -v tests/unittests/test_unit_wos_sondheim_alert.py
+```
+
 Test the function locally:
 ```bash
-python netlify/functions/theatre_alert.py
+python3 -m tests.inttests.test_wos_sondheim_alert",
 ```
 
 Test via HTTP (after deployment):
@@ -81,8 +85,6 @@ All parameters are configurable via environment variables:
 - `EMAIL_SENDER`: Sender email address
 - `MAILJET_API_KEY`: Mailjet API key for email sending
 - `MAILJET_SECRET_KEY`: Mailjet secret key for email sending
-- `GOOGLE_PLACES_API_KEY`: (Optional) For future venue search
-- `SEARCH_RADIUS_MILES`: Search radius in miles (default: 50)
 
 ## Scheduling
 
@@ -107,9 +109,4 @@ The service sends HTML emails with:
 
 - The main scraping, parsing, and email logic is in `netlify/functions/wos_sondheim_alert.py`.
 - Configuration is loaded and validated via the singleton in `config.py`.
-- Extend venue search by editing `venue_finder.py` (future use).
 - Add new tests in `tests/unittests/` (unit) or `tests/inttests/` (integration).
-
-## License
-
-MIT License

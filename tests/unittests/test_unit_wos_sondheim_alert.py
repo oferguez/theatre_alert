@@ -1,5 +1,5 @@
 """
-pytest -v tests/unittests/test_wos_sondheim_alert.py
+pytest -v tests/unittests/test_unit_wos_sondheim_alert.py
 """
 
 import pytest
