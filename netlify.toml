@@ -11,7 +11,7 @@
   # The 'publish' directory is where Netlify expects to find your static site assets.
   # If you only have functions and no static site, you still need to specify one.
   # Pointing it to the functions directory itself is a common workaround for function-only repos.
-  publish = "netlify/functions" 
+  publish = "public" 
 
 
 [functions]
