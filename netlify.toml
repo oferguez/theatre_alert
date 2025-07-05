@@ -2,18 +2,25 @@
 
 [build]
   # IMPORTANT: Keep this line. It explicitly tells Netlify where your functions are.
-  # If you remove it, Netlify might not find them if the default isn't exactly 'netlify/functions'.
   functions = "netlify/functions" 
   command = "mkdir -p netlify/functions && cp config.py netlify/functions/"
   publish = "public" 
 
 # --- FUNCTIONS CONFIGURATION ---
 
-# We are REMOVING the global [functions] table entirely, 
-# as it seems to conflict with [[functions]].
-# Instead, we will define environment variables directly within each [[functions]] block.
-
+# Individual scheduled function definition(s)
+# Place the scheduled function definition FIRST
 [[functions]] 
   function = "wos_sondheim_alert"
   schedule = "0 9 * * *"          
-  environment = { PYTHON_VERSION = "3.12" } 
+  environment = { PYTHON_VERSION = "3.12" } # <--- Keep it here for now
+
+# General [functions] table for global settings (like environment variables that apply to ALL functions)
+# This will be placed AFTER the individual [[functions]] blocks.
+# This might resolve the "object vs array" redefinition conflict if parser has ordering quirk.
+[functions]
+  # We might need to add a dummy key here if it complains about an empty table,
+  # or if it still conflicts, this section may need to be removed entirely.
+  # For now, let's keep it as an empty object if there are no other global function settings.
+  # If it complains about empty object, remove this [functions] section.
+  # If it works, this is where you'd put global function settings in the future.
