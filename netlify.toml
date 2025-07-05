@@ -9,18 +9,12 @@
 # --- FUNCTIONS CONFIGURATION ---
 
 # Individual scheduled function definition(s)
-# Place the scheduled function definition FIRST
 [[functions]] 
   function = "wos_sondheim_alert"
   schedule = "0 9 * * *"          
-  environment = { PYTHON_VERSION = "3.12" } # <--- Keep it here for now
+  environment = { PYTHON_VERSION = "3.12" }
 
-# General [functions] table for global settings (like environment variables that apply to ALL functions)
-# This will be placed AFTER the individual [[functions]] blocks.
-# This might resolve the "object vs array" redefinition conflict if parser has ordering quirk.
-[functions]
-  # We might need to add a dummy key here if it complains about an empty table,
-  # or if it still conflicts, this section may need to be removed entirely.
-  # For now, let's keep it as an empty object if there are no other global function settings.
-  # If it complains about empty object, remove this [functions] section.
-  # If it works, this is where you'd put global function settings in the future.
+# If you need global function settings that apply to ALL functions, 
+# you can add them here as additional [[functions]] entries or use 
+# the [functions] table, but not both in the same file.
+# For now, all function-specific settings are handled in the [[functions]] array above.
