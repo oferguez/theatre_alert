@@ -8,13 +8,10 @@
 
 # --- FUNCTIONS CONFIGURATION ---
 
-# Individual scheduled function definition(s)
-[[functions]] 
-  function = "wos_sondheim_alert"
-  schedule = "0 9 * * *"          
-  environment = { PYTHON_VERSION = "3.12" }
+# Scheduled function configuration
+[functions."wos_sondheim_alert"]
+  schedule = "0 9 * * *"
 
-# If you need global function settings that apply to ALL functions, 
-# you can add them here as additional [[functions]] entries or use 
-# the [functions] table, but not both in the same file.
-# For now, all function-specific settings are handled in the [[functions]] array above.
+# Environment variables for functions
+[functions.environment]
+  PYTHON_VERSION = "3.12"
