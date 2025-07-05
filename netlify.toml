@@ -20,4 +20,3 @@
 [[functions]]
   name = "wos_sondheim_alert" # Matches the filename wos_sondheim_alert.py
   schedule = "0 9 * * *"          # Run daily at 9 AM UTC
-  environment = { PYTHON_VERSION = "3.12" } 
