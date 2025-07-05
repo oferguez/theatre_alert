@@ -1,37 +1,22 @@
 # netlify.toml at project_root/
 
 [build]
-  # This tells Netlify where your serverless function source files are.
-  functions = "netlify/functions"
+  # IMPORTANT: Keep this line. It explicitly tells Netlify where your functions are.
+  # If you remove it, Netlify might not find them if the default isn't exactly 'netlify/functions'.
+  functions = "netlify/functions" 
 
-  # This command runs BEFORE Netlify bundles your functions.
-  # It ensures 'config.py' is copied into the functions directory,
-  # making it accessible to 'wos_sondheim_alert.py' during runtime.
   command = "mkdir -p netlify/functions && cp config.py netlify/functions/"
-  
-  # This tells Netlify where your *static site* files are located after a build.
-  # By separating this from the functions directory, we clarify the intent.
   publish = "public" 
 
+# --- FUNCTIONS CONFIGURATION ---
 
-# --- START OF FUNCTIONS CONFIGURATION ---
+# We are REMOVING the global [functions] table entirely, 
+# as it seems to conflict with [[functions]].
+# Instead, we will define environment variables directly within each [[functions]] block.
 
-# This is the GENERAL [functions] TABLE (single brackets)
-# for configuration that applies to ALL functions, such as environment variables.
-[functions]
-  # Environment variables specific to the FUNCTIONS runtime.
-  # This is the correct place to set the Python version for your functions.
-  environment = { PYTHON_VERSION = "3.12" } # Use "3.12" or "3.12.3" if Netlify supports minor versions explicitly.
-
-
-# This defines a specific function configuration, in this case, a scheduled function.
-# The '[[functions]]' denotes an ARRAY of function definitions.
-# Each [[functions]] entry describes one scheduled function.
 [[functions]] 
-  function = "wos_sondheim_alert" # This key maps to your function file name (without .py)
-  schedule = "0 9 * * *"          # Run daily at 9 AM UTC
-
-# If you had another scheduled function, you would add another [[functions]] block:
-# [[functions]]
-#   function = "another_scheduled_function"
-#   schedule = "0 0 * * *"
+  function = "wos_sondheim_alert"
+  schedule = "0 9 * * *"          
+  
+  # Moving environment variables here:
+  environment = { PYTHON_VERSION = "3.12" } # <--- MOVED THIS HERE
