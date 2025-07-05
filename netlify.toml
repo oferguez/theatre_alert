@@ -4,7 +4,6 @@
   # IMPORTANT: Keep this line. It explicitly tells Netlify where your functions are.
   # If you remove it, Netlify might not find them if the default isn't exactly 'netlify/functions'.
   functions = "netlify/functions" 
-
   command = "mkdir -p netlify/functions && cp config.py netlify/functions/"
   publish = "public" 
 
@@ -17,6 +16,4 @@
 [[functions]] 
   function = "wos_sondheim_alert"
   schedule = "0 9 * * *"          
-  
-  # Moving environment variables here:
-  environment = { PYTHON_VERSION = "3.12" } # <--- MOVED THIS HERE
+  environment = { PYTHON_VERSION = "3.12" } 
