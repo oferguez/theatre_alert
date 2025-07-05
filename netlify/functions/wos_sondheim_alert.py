@@ -275,7 +275,7 @@ def send_email(subject: str, html_body: str):
     return response.status_code, response.json()
 
 
-def handle(event, context):
+def handler(event, context):
     """
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """

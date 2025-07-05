@@ -7,7 +7,7 @@ from netlify.functions.wos_sondheim_alert import (
     extract_info_links,
     extract_details_from_info_page,
     search_shows,
-    handle,
+    handler,
 )
 from netlify.functions.wos_constants import SHOWS
 import subprocess
@@ -58,5 +58,5 @@ def test_flow() -> None:
 
 
 if __name__ == "__main__":
-    result = handle(None, None)  # Call the handle function to run the tests
+    result = handler(None, None)  # Call the handle function to run the tests
     PrettyPrinter().pprint(result)
