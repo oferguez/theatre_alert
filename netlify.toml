@@ -1,22 +1,37 @@
+# netlify.toml at project_root/
+
 [build]
-  # Define the directory where your serverless functions are located.
-  # This is crucial for Netlify to find and deploy them.
+  # This tells Netlify where your serverless function source files are.
   functions = "netlify/functions"
 
   # This command runs BEFORE Netlify bundles your functions.
   # It ensures 'config.py' is copied into the functions directory,
   # making it accessible to 'wos_sondheim_alert.py' during runtime.
   command = "mkdir -p netlify/functions && cp config.py netlify/functions/"
-
-  # The 'publish' directory is where Netlify expects to find your static site assets.
-  # If you only have functions and no static site, you still need to specify one.
-  # Pointing it to the functions directory itself is a common workaround for function-only repos.
+  
+  # This tells Netlify where your *static site* files are located after a build.
+  # By separating this from the functions directory, we clarify the intent.
   publish = "public" 
 
 
-# This defines a scheduled function.
-# The 'name' here MUST match the filename of your function (without the .py extension).
-# So, 'wos_sondheim_alert' corresponds to 'netlify/functions/wos_sondheim_alert.py'.
-[[functions]]
-  name = "wos_sondheim_alert" # Matches the filename wos_sondheim_alert.py
+# --- START OF FUNCTIONS CONFIGURATION ---
+
+# This is the GENERAL [functions] TABLE (single brackets)
+# for configuration that applies to ALL functions, such as environment variables.
+[functions]
+  # Environment variables specific to the FUNCTIONS runtime.
+  # This is the correct place to set the Python version for your functions.
+  environment = { PYTHON_VERSION = "3.12" } # Use "3.12" or "3.12.3" if Netlify supports minor versions explicitly.
+
+
+# This defines a specific function configuration, in this case, a scheduled function.
+# The '[[functions]]' denotes an ARRAY of function definitions.
+# Each [[functions]] entry describes one scheduled function.
+[[functions]] 
+  function = "wos_sondheim_alert" # This key maps to your function file name (without .py)
   schedule = "0 9 * * *"          # Run daily at 9 AM UTC
+
+# If you had another scheduled function, you would add another [[functions]] block:
+# [[functions]]
+#   function = "another_scheduled_function"
+#   schedule = "0 0 * * *"
