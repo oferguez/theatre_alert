@@ -12,8 +12,7 @@ import re
 import requests
 from mailjet_rest import Client
 
-from .wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
-from .wos_constants import QUERY_URL_TEMPLATE
+from wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE, QUERY_URL_TEMPLATE
 from config import Config
 
 

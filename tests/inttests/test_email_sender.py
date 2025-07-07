@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from netlify.functions.wos_sondheim_alert import send_email
+from main import send_email
 
 
 def test_send_email():

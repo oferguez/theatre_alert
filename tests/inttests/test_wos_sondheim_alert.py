@@ -3,13 +3,13 @@ from pprint import PrettyPrinter
 import datetime
 from dotenv import load_dotenv
 
-from netlify.functions.wos_sondheim_alert import (
+from main import (
     extract_info_links,
     extract_details_from_info_page,
     search_shows,
     handler,
 )
-from netlify.functions.wos_constants import SHOWS
+from wos_constants import SHOWS
 import subprocess
 
 load_dotenv()

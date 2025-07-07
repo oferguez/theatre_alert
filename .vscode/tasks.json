@@ -45,6 +45,13 @@
 			"command": "venv_theatre_alert/bin/python -m tests.inttests.test_wos_sondheim_alert",
 			"group": "test",
 			"problemMatcher": []
+		},
+		{
+			"label": "Unit Tests: pytest (unittests)",
+			"type": "shell",
+			"command": "venv_theatre_alert/bin/python -m pytest tests/unittests",
+			"group": "test",
+			"problemMatcher": []
 		}
 	]
 }
