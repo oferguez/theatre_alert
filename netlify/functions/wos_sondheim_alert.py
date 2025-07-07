@@ -10,12 +10,11 @@ from typing import List, Tuple
 from bs4 import BeautifulSoup, FeatureNotFound
 import re
 import requests
+from mailjet_rest import Client
 
-import config
 from .wos_constants import SHOWS, HTML_TEMPLATE, HTML_SHOW_TEMPLATE
 from .wos_constants import QUERY_URL_TEMPLATE
 from config import Config
-from mailjet_rest import Client
 
 
 def extract_info_links(html_content: str, show_name: str) -> Tuple[List[str], str]:
@@ -276,7 +275,7 @@ def send_email(subject: str, html_body: str):
     return response.status_code, response.json()
 
 
-def handle(event, context):
+def handler(event, context):
     """
     Netlify serverless handler for Sondheim WhatsOnStage report.
     """
