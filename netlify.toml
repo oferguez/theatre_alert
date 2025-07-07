@@ -1,19 +1,17 @@
-[build]
-  functions = "netlify/functions"
-
-[functions]
-  python_version = "3.12.3"
-
-[[functions]]
-  schedule = "0 9 * * *"  # Run daily at 9 AM UTC
-  name = "wos_sondheim_alert"
+# netlify.toml at project_root/
 
 [build]
-  # This command runs before Netlify tries to build and bundle your functions.
-  # It copies config.py into the functions directory.
-  # The '&&' ensures the functions directory is created if it somehow doesn't exist,
-  # though it should given your structure.
-  command = "mkdir -p netlify/functions && cp config.py netlify/functions/" 
+  # IMPORTANT: Keep this line. It explicitly tells Netlify where your functions are.
+  functions = "netlify/functions" 
+  command = "echo 'Starting build...' && pwd && ls -la && echo 'Creating functions directory...' && mkdir -p netlify/functions && echo 'Files in root:' && find . -name '*.py' -type f && echo 'Copying files...' && cp *.py netlify/functions/ && echo 'Functions directory contents:' && ls -la netlify/functions/ && echo '.netlify:' && ls -la .netlify && echo 'Python' && python3 --version && echo 'Testing import...' && python3 -c \"import sys; print('sys.path:', sys.path); from netlify.functions.wos_sondheim_alert import handler; print('Handler:', handler)\" && echo 'Build complete.'"
+  publish = "public" 
 
-[build.environment]
-  PYTHONPATH = "/opt/buildhome/repo"
+# --- FUNCTIONS CONFIGURATION ---
+
+# Scheduled function configuration
+[functions."wos_sondheim_alert"]
+  schedule = "0 9 * * *"
+
+# Environment variables for functions
+[functions.environment]
+  PYTHON_VERSION = "3.12"
