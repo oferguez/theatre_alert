@@ -4,6 +4,9 @@ extract info for each and compile a weekly email report
 """
 
 import os
+from pprint import PrettyPrinter
+import functions_framework
+from flask import Request
 
 from datetime import datetime
 from typing import List, Tuple
@@ -209,6 +212,7 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
     """
     result = ""
     html_aggregate = ""
+    total_results = 0
     for show_name in shows:
         result += (
             f"[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]"
@@ -228,10 +232,11 @@ def search_shows(shows: List[str]) -> Tuple[str, str]:
                     f"<p>Error fetching info page for {show_name}: {errors}</p>"
                 )
             result += text_result
+            total_results += 1
             html_aggregate += html_result
     html_report = HTML_TEMPLATE.format(content=html_aggregate)
     result += log
-    return result, html_report
+    return total_results, result, html_report
 
 
 def send_email(subject: str, html_body: str):
@@ -274,13 +279,16 @@ def send_email(subject: str, html_body: str):
     return response.status_code, response.json()
 
 
-def handler(event, context):
+@functions_framework.http
+def handler(request: Request) -> dict:
     """
-    Netlify serverless handler for Sondheim WhatsOnStage report.
+    GCL serverless handler for Sondheim WhatsOnStage report.
     """
-    result, html_report = search_shows(SHOWS)
+    total_results, result, html_report = search_shows(SHOWS)
     (status_code, response_json) = send_email(
-        subject=f"Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}",
+        subject=f"{total_results} Sondheim UK Report For {datetime.now().strftime('%B %d, %Y')}",
         html_body=html_report,
     )
-    return {"statusCode": status_code, "body": response_json, "log": result}
+    r = {"statusCode": status_code, "body": response_json, "log": result}
+    PrettyPrinter().pprint(r)
+    return r

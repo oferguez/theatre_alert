@@ -58,5 +58,4 @@ def test_flow() -> None:
 
 
 if __name__ == "__main__":
-    result = handler(None, None)  # Call the handle function to run the tests
-    PrettyPrinter().pprint(result)
+    result = handler(None)  # Call the handle function to run the tests
