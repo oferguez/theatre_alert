@@ -34,6 +34,46 @@
                 "tests/unittests/test_wos_sondheim_alert.py"
             ],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Flow Culture Officer",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tests.inttests.test_culture_officer",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Culture Officer Unit Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "--maxfail=1",
+                "--disable-warnings",
+                "--capture=no",
+                "--tb=short",
+                "-v",
+                "tests/unittests/test_culture_officer_formatter.py"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug Culture Officer Unit Tests (Single Test)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "--maxfail=1",
+                "--disable-warnings",
+                "--capture=no",
+                "--tb=short",
+                "-v",
+                "tests/unittests/test_culture_officer_formatter.py::TestCultureOfficerFormatter::test_html_output_file_creation"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
+

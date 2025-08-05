@@ -6,6 +6,7 @@ function that monitors theatre venues and sends email alerts.
 """
 
 import os
+import logging
 
 
 class Config:  # pylint: disable=too-few-public-methods
@@ -30,6 +31,12 @@ class Config:  # pylint: disable=too-few-public-methods
         self.email_sender = os.getenv("EMAIL_SENDER", "")
         self.mailjet_api_key = os.getenv("MAILJET_API_KEY", "")
         self.mailjet_secret = os.getenv("MAILJET_SECRET_KEY", "")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
+        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o")
+        self.openai_max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
+        self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
+        self.openai_top_p = float(os.getenv("OPENAI_TOP_P", "1.0"))
+        self.debug = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
         # future use maybe sometime somewhere
         self.google_places_api_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
         self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
@@ -49,6 +56,7 @@ class Config:  # pylint: disable=too-few-public-methods
             "email_sender",
             "mailjet_api_key",
             "mailjet_secret",
+            "openai_api_key",
         ]
 
         for field in required_fields:
@@ -60,6 +68,8 @@ class Config:  # pylint: disable=too-few-public-methods
         return True
 
     def load_and_validate(self) -> "Config":
+        logger = logging.getLogger("culture_officer")
+        logger.info("Loading and validating configuration...")
         """
         Load environment variables and validate required fields.
 
@@ -69,4 +79,5 @@ class Config:  # pylint: disable=too-few-public-methods
         self._load()
         if not self._validate():
             raise ValueError("Configuration validation failed")
+        logger.info("Configuration loaded and validated successfully.")
         return self
