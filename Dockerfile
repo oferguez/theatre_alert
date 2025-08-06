@@ -28,7 +28,7 @@ COPY cultural_officer_system_prompt.py .
 
 # Set environment variables from .env.docker file
 ENV EMAIL_RECIPIENT=guez.ofer@gmail.com
-ENV EMAIL_RECIPIENT_2=aeyal.gross@gmail.com
+ENV EMAIL_RECIPIENT_2=nachush2000@gmail.com
 ENV EMAIL_SENDER=guez.ofer@gmail.com
 ENV SENDGRID_API_KEY=your-sendgrid-api-key
 ENV GOOGLE_PLACES_API_KEY=your-google-places-api-key

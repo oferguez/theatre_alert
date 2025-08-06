@@ -34,7 +34,7 @@ class Config:  # pylint: disable=too-few-public-methods
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
         self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o")
         self.openai_max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-        self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
+        self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.1"))
         self.openai_top_p = float(os.getenv("OPENAI_TOP_P", "1.0"))
         self.debug = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
         # future use maybe sometime somewhere
