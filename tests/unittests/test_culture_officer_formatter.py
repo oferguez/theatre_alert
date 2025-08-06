@@ -11,9 +11,7 @@ from format_culture_html import parse_and_format_culture_html
 # Force logging configuration for tests
 logging.getLogger().handlers.clear()
 logging.basicConfig(
-    level=logging.INFO, 
-    format="[%(asctime)s] %(levelname)s: %(message)s",
-    force=True
+    level=logging.INFO, format="[%(asctime)s] %(levelname)s: %(message)s", force=True
 )
 logger = logging.getLogger("culture_officer")
 
@@ -43,10 +41,10 @@ class TestCultureOfficerFormatter(unittest.TestCase):
         self.assertIn("event-box", html_output)
 
         # Check for specific events from the saved results
-        self.assertIn("Queer Love: Intimacy and Identity", html_output)
-        self.assertIn("The HIV Monologues", html_output)
-        self.assertIn("BFI Flare", html_output)
-        self.assertIn("Keith Haring", html_output)
+        self.assertIn("Queer Visions: A Film Retrospective", html_output)
+        self.assertIn("Intimate Encounters: An Evening of Queer Theatre", html_output)
+        self.assertIn("Moonlight: Under the Stars Screening", html_output)
+        self.assertIn("Art and Activism: A Queer Perspective", html_output)
 
         # Verify links are properly formatted
         self.assertIn("<a href=", html_output)
