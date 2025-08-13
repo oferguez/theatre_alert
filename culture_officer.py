@@ -3,6 +3,7 @@ Culture Officer: Scheduled Google Cloud Function to query GPT for
 cultural events coming up in London, and email results.
 """
 
+from pprint import PrettyPrinter
 from format_culture_html import parse_and_format_culture_html
 import os
 import requests
@@ -11,13 +12,54 @@ import logging
 from config import Config
 from mailjet_rest import Client
 from typing import Optional
-from cultural_officer_system_prompt import system_prompt
+
+# from cultural_officer_system_prompt import system_prompt
+from ppx_cultural_officer_system_prompt import system_prompt
+
 from flask import Request
 
 logging.basicConfig(
     level=logging.INFO, format="[%(asctime)s] %(levelname)s: %(message)s"
 )
 logger = logging.getLogger("culture_officer")
+
+
+def call_perplexity(system_prompt: str, user_prompt: str, config: Config) -> str:
+    """
+    Calls Perplexity with the given prompts and config parameters.
+    """
+    logger.info("Calling Perplexity API with model: %s", config.perplexity_model)
+    api_url = "https://api.perplexity.ai/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {config.perplexity_api_key}",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "model": config.perplexity_model,
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful research assistant. Provide comprehensive, well-sourced answers with citations.",
+            },
+            {
+                "role": "user",
+                "content": system_prompt,
+            },  # todo: sort out user/system prompts
+        ],
+        "temperature": 0.2,  # Lower for more factual responses
+        "max_tokens": 2000,
+    }
+
+    logger.info("Sending request to OpenAI API...")
+    try:
+        response = requests.post(api_url, json=data, headers=headers)
+        response.raise_for_status()
+        result = response.json()
+    except requests.exceptions.RequestException as e:
+        logger.warning(f"API call failed: {e}")
+        return None
+    logger.info("Received response from Perplexity API.")
+    return result
 
 
 def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
@@ -36,12 +78,19 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        "max_tokens": config.openai_max_tokens,
+        "max_completion_tokens": config.openai_max_tokens,
         "temperature": config.openai_temperature,
         "top_p": config.openai_top_p,
     }
     logger.info("Sending request to OpenAI API...")
     response = requests.post(api_url, headers=headers, json=data, timeout=180)
+    logger.info("OpenAI API response: %s", PrettyPrinter().pprint(response))
+    if response.status_code != 200:
+        logger.error(
+            "OpenAI API call failed with status code %s: %s",
+            response.status_code,
+            response.text,
+        )
     response.raise_for_status()
     result = response.json()
     logger.info("Received response from OpenAI API.")
@@ -89,16 +138,15 @@ def handler(request: Request) -> dict:
         "CULTURE_OFFICER_USER_PROMPT", "What's new in the world of culture this week?"
     )
     logger.info("Calling GPT with system prompt and user prompt.")
-    gpt_result = call_gpt(system_prompt, user_prompt, config)
+    html_search_result = call_gpt(system_prompt, user_prompt, config)
+    # search_result = call_perplexity(system_prompt, user_prompt, config)
     subject = "Culture Officer Report"
-    html_body = parse_and_format_culture_html(gpt_result)
+    # html_body = parse_and_format_culture_html(html_search_result)
     if config.debug:
-        debug_path = os.path.join(
-            os.path.dirname(__file__), "culture_officer_debug.txt"
-        )
+        debug_path = os.path.join(os.path.dirname(__file__), "html_result.html")
         with open(debug_path, "w", encoding="utf-8") as f:
-            f.write(gpt_result)
-        logger.info("Debug mode: GPT output saved to %s", debug_path)
-    status_code, response_json = send_email(subject, html_body, config)
+            f.write(html_search_result)
+        logger.info("Debug mode: LLM output saved to %s", debug_path)
+    status_code, response_json = send_email(subject, html_search_result, config)
     logger.info("Handler completed. Status: %s", status_code)
-    return {"statusCode": status_code, "body": response_json, "log": gpt_result}
+    return {"statusCode": status_code, "body": response_json, "log": html_search_result}

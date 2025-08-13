@@ -32,14 +32,16 @@ class Config:  # pylint: disable=too-few-public-methods
         self.mailjet_api_key = os.getenv("MAILJET_API_KEY", "")
         self.mailjet_secret = os.getenv("MAILJET_SECRET_KEY", "")
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
-        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o")
+        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-5")
         self.openai_max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-        self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.1"))
+        self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "1"))
         self.openai_top_p = float(os.getenv("OPENAI_TOP_P", "1.0"))
         self.debug = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
         # future use maybe sometime somewhere
         self.google_places_api_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
         self.search_radius_miles = int(os.getenv("SEARCH_RADIUS_MILES", "50"))
+        self.perplexity_api_key = os.getenv("PERPLEXITY_API_KEY", "")
+        self.perplexity_model = os.getenv("PERPLEXITY_MODEL", "sonar-pro")
 
     def _validate(self) -> bool:
         """
