@@ -12,9 +12,11 @@ import logging
 from config import Config
 from mailjet_rest import Client
 from typing import Optional
+import json
 
-# from cultural_officer_system_prompt import system_prompt
-from ppx_cultural_officer_system_prompt import system_prompt
+from cultural_officer_system_prompt import system_prompt, user_prompt
+
+# from ppx_cultural_officer_system_prompt import system_prompt
 
 from flask import Request
 
@@ -78,12 +80,17 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        "max_completion_tokens": config.openai_max_tokens,
+        "max_completion_tokens": max(256, int(config.openai_max_tokens)),  # ensure >0
         "temperature": config.openai_temperature,
         "top_p": config.openai_top_p,
+        "response_format": {"type": "text"},  # force plain text
     }
     logger.info("Sending request to OpenAI API...")
-    response = requests.post(api_url, headers=headers, json=data, timeout=180)
+    if config.debug:
+        logger.info(
+            "System Prompt: \n%s\n", json.dumps(data, indent=2, ensure_ascii=False)
+        )
+    response = requests.post(api_url, headers=headers, json=data, timeout=600)
     logger.info("OpenAI API response: %s", PrettyPrinter().pprint(response))
     if response.status_code != 200:
         logger.error(
@@ -94,6 +101,19 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
     response.raise_for_status()
     result = response.json()
     logger.info("Received response from OpenAI API.")
+    if config.debug:
+        logger.info("System Prompt: \n%s\n", system_prompt)
+        logger.info("json result: \n%s\n", json.dumps(result, indent=2))
+
+    msg = result["choices"][0]["message"]
+    content = msg.get("content", "")
+    if isinstance(content, list):
+        content = "".join(p.get("text", "") for p in content if isinstance(p, dict))
+
+    if not content:
+        logger.warning("finish_reason: %s", result["choices"][0].get("finish_reason"))
+        logger.warning("full choice: %s", json.dumps(result["choices"][0], indent=2))
+
     return result["choices"][0]["message"]["content"]
 
 
@@ -134,9 +154,6 @@ def handler(request: Request) -> dict:
     logger.info("Handler triggered.")
     config = Config().load_and_validate()
     # Customize these prompts as needed
-    user_prompt = os.getenv(
-        "CULTURE_OFFICER_USER_PROMPT", "What's new in the world of culture this week?"
-    )
     logger.info("Calling GPT with system prompt and user prompt.")
     html_search_result = call_gpt(system_prompt, user_prompt, config)
     # search_result = call_perplexity(system_prompt, user_prompt, config)
