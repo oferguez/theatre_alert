@@ -57,7 +57,10 @@ def get_user_prompt():
     Style:
     • Elegant, concise; order by date.
     • End with one left‑field suggestion the user might not expect but could love.
-    • Output as a single HTML page with simple card layout (minimal CSS inline is fine).
+    • Output as a single HTML page with simple vertical colourful cards. The html will be rendered within gmail, so only use css directives as recognized by gmail. 
+      - cards border rotating through the rainbow colours
+      - links in blue
+      - all info text in dark black 
     """
 
 
