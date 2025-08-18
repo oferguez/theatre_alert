@@ -143,8 +143,12 @@ python -m pytest tests/inttests/
 ### Deployment Pipeline
 The application uses Google Cloud Build with the following pipeline:
 
+### Useful links:
+1. [Build page](https://console.cloud.google.com/cloud-build/builds?referrer=search&hl=en-au&inv=1&invt=Ab50Sg&project=theatre-alert)
+2. [Schdeule page](https://console.cloud.google.com/cloudscheduler/jobs/edit/europe-west2/trigger-culture-officer?hl=en-au&inv=1&invt=Ab50Sg&project=theatre-alert)
+
 #### Build Steps:
-1. **Build**: Creates Docker image with commit SHA tag
+1. **Build**: Creates Docker image with commit SHA tag 
 2. **Push**: Pushes image to Google Artifact Registry
 3. **Deploy**: Updates Cloud Run service with new image
 4. **Schedule**: Creates/updates Cloud Scheduler job
