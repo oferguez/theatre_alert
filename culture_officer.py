@@ -81,8 +81,9 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
             {"role": "user", "content": user_prompt},
         ],
         "max_completion_tokens": max(256, int(config.openai_max_tokens)),  # ensure >0
-        "temperature": config.openai_temperature,
-        "top_p": config.openai_top_p,
+        # temperature and top_p not supported by search-preview model
+        # "temperature": config.openai_temperature,
+        # "top_p": config.openai_top_p,
         "response_format": {"type": "text"},  # force plain text
     }
     logger.info("Sending request to OpenAI API...")

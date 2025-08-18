@@ -1,8 +1,9 @@
-# Virtual environments
+# local development files
 venv_theatre_alert
 obs
 .env
 .env.local
+html_result.html
 
 # Python
 __pycache__/
