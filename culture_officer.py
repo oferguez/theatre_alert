@@ -154,17 +154,24 @@ def handler(request: Request) -> dict:
     """
     logger.info("Handler triggered.")
     config = Config().load_and_validate()
-    # Customize these prompts as needed
-    logger.info("Calling GPT with system prompt and user prompt.")
-    html_search_result = call_gpt(system_prompt, user_prompt, config)
-    # search_result = call_perplexity(system_prompt, user_prompt, config)
+    # Update user/system prompt to request structured JSON
+    structured_user_prompt = user_prompt + "\nPlease return the results as a JSON array of objects, each with fields: title, date, location, description, url."
+    logger.info("Calling GPT with system prompt and user prompt for structured JSON.")
+    llm_result = call_gpt(system_prompt, structured_user_prompt, config)
+    # Parse JSON result
+    try:
+        results_obj = json.loads(llm_result)
+    except Exception as e:
+        logger.error(f"Failed to parse LLM result as JSON: {e}\nRaw result: {llm_result}")
+        results_obj = []
+    # Format HTML using the structured results
+    html_body = parse_and_format_culture_html(results_obj)
     subject = "Culture Officer Report"
-    # html_body = parse_and_format_culture_html(html_search_result)
     if config.debug:
         debug_path = os.path.join(os.path.dirname(__file__), "html_result.html")
         with open(debug_path, "w", encoding="utf-8") as f:
-            f.write(html_search_result)
-        logger.info("Debug mode: LLM output saved to %s", debug_path)
-    status_code, response_json = send_email(subject, html_search_result, config)
+            f.write(html_body)
+        logger.info("Debug mode: formatted HTML output saved to %s", debug_path)
+    status_code, response_json = send_email(subject, html_body, config)
     logger.info("Handler completed. Status: %s", status_code)
-    return {"statusCode": status_code, "body": response_json, "log": html_search_result}
+    return {"statusCode": status_code, "body": response_json, "log": html_body}
