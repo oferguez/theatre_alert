@@ -22,6 +22,8 @@ def get_system_prompt():
         • "datetime_text_found" must be the exact date string copied from the page.
         • Keep description ≤ 40 words, factual (no hype).
         • If fewer than 10 events meet criteria, return fewer; do not fabricate.
+
+        • Please return the results as a JSON object with two fields: "bonus" and "events", where "events" is an array of objects, each with fields: title, date, location, description, url.
         """
 
 
@@ -57,12 +59,14 @@ def get_user_prompt():
     Style:
     • Elegant, concise; order by date.
     • End with one left‑field suggestion the user might not expect but could love.
-    • Output as a single HTML page with simple vertical colourful cards. The html will be rendered within gmail, so only use css directives as recognized by gmail. 
-      - cards border rotating through the rainbow colours
-      - links in blue
-      - all info text in dark black 
-    """
+    • Please return the results as a JSON object with two fields: "bonus" and "events", where "events" is an array of objects, each with fields: title, date, location, description, url.
+"""
 
 
-system_prompt = get_system_prompt()
-user_prompt = get_user_prompt()
+# system_prompt = get_system_prompt()
+# user_prompt = get_user_prompt()
+
+#     • Output as a single HTML page with simple vertical colourful cards. The html will be rendered within gmail, so only use css directives as recognized by gmail.
+#       - cards border rotating through the rainbow colours
+#       - links in blue
+#       - all info text in dark black

@@ -32,7 +32,10 @@ class Config:  # pylint: disable=too-few-public-methods
         self.mailjet_api_key = os.getenv("MAILJET_API_KEY", "")
         self.mailjet_secret = os.getenv("MAILJET_SECRET_KEY", "")
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
-        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-search-preview")
+        self.openai_model = os.getenv(
+            "OPENAI_MODEL", "gpt-4o-2024-08-06"
+        )  # the model to use when we want both web search tool and structured output
+
         self.openai_max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "15000"))
         self.openai_temperature = float(os.getenv("OPENAI_TEMPERATURE", "1"))
         self.openai_top_p = float(os.getenv("OPENAI_TOP_P", "1.0"))
@@ -54,12 +57,13 @@ class Config:  # pylint: disable=too-few-public-methods
             ValueError: If any required environment variable is missing
         """
         required_fields = [
-            "email_recipient",
             "email_sender",
             "mailjet_api_key",
             "mailjet_secret",
             "openai_api_key",
         ]
+        if not self.debug:
+            required_fields.append("email_recipient")
 
         for field in required_fields:
             if not getattr(self, field):

@@ -1,3 +1,5 @@
+from html import escape
+from datetime import datetime
 import logging
 
 """
@@ -17,104 +19,130 @@ def parse_and_format_culture_html(events: list, bonus: str = None) -> str:
     Accepts a list of event dicts and optional bonus, returns formatted HTML.
     """
     logger.info("parse_and_format_culture_html (structured input)...")
-    return format_culture_html(events, bonus)
+    return render_events_email(events, bonus)
 
 
-def format_culture_html(events: list, bonus: str = None) -> str:
-    import re
+def render_events_email(events, bonus, title="Culture Officer Report"):
+    """
+    Build a simple, email-safe HTML digest from a list of events.
 
-    def md_to_html(text):
-        # Convert **bold** and *italic* to HTML
-        text = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", text)
-        text = re.sub(r"\*([^*]+)\*", r"<i>\1</i>", text)
-        return text
+    events: list of dicts with keys:
+        - title (str)      : required
+        - venue (str)      : required
+        - date (str)       : required
+        - desc (str)       : optional
+        - link (str)       : optional (URL)
+        - link_text (str)  : optional (defaults 'More Info')
+    bonus: str (optional)  : an extra paragraph boxed at the end
+    title: str (optional)  : page heading
 
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; }
-    .container { max-width: 700px; margin: 0 auto; }
-    .header { font-size: 1.5em; margin: 30px 0 20px 0; font-weight: bold; }
-    .intro { font-size: 1.1em; margin-bottom: 18px; color: #222; }
-    .event-box {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 24px;
-      padding: 22px 28px 18px 28px;
-      border: 6px solid #4a90e2;
-    }
-    .event-meta { color: #555; margin-bottom: 7px; }
-    .event-desc { font-size: 1.15em; margin-bottom: 7px; }
-    .event-link a { color: #4a90e2; text-decoration: none; }
-    .event-link a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">Some Recommendations in London for the next 10 days</div>
-"""
-    # Rainbow border colors
-    rainbow_colors = [
-        "#FF0000", # Red
-        "#FF7F00", # Orange
-        "#FFFF00", # Yellow
-        "#00FF00", # Green
-        "#0000FF", # Blue
-        "#4B0082", # Indigo
-        "#9400D3", # Violet
+    Returns: str (HTML)
+    """
+    # Border colors to cycle (roughly like your screenshot)
+    palette = [
+        "#e53935",
+        "#f39c12",
+        "#fbc02d",
+        "#43a047",
+        "#1e88e5",
+        "#8e24aa",
+        "#009688",
+        "#ef6c00",
     ]
-    # Optionally show an intro if present in the first event's desc
-    if events and events[0].get("desc") and "selection of" in events[0]["desc"]:
-        html += f"    <div class='intro'>{md_to_html(events[0]['desc'])}</div>\n"
-        events = events[1:]
-    for idx, event in enumerate(events):
-        if not event.get("desc") or not event.get("venue"):
-            html = (
-                    "<!DOCTYPE html>\n"
-                    "<html>\n"
-                    "<head>\n"
-                    "  <style>\n"
-                    "    body { font-family: Arial, sans-serif; background: #f7f7f7; }\n"
-                    "    .container { max-width: 700px; margin: 0 auto; }\n"
-                    "    .header { font-size: 1.5em; margin: 30px 0 20px 0; font-weight: bold; }\n"
-                    "    .intro { font-size: 1.1em; margin-bottom: 18px; color: #222; }\n"
-                    "    .event-box {\n"
-                    "      background: #fff;\n"
-                    "      border-radius: 10px;\n"
-                    "      box-shadow: 0 2px 8px rgba(0,0,0,0.07);\n"
-                    "      margin-bottom: 24px;\n"
-                    "      padding: 22px 28px 18px 28px;\n"
-                    "      border: 6px solid #4a90e2;\n"
-                    "    }\n"
-                    "    .event-title { font-size: 1.15em; font-weight: bold; margin-bottom: 7px; }\n"
-                    "    .event-meta { color: #555; margin-bottom: 7px; }\n"
-                    "    .event-desc { font-size: 1.15em; margin-bottom: 7px; }\n"
-                    "    .event-link a { color: #4a90e2; text-decoration: none; }\n"
-                    "    .event-link a:hover { text-decoration: underline; }\n"
-                    "  </style>\n"
-                    "</head>\n"
-                    "<body>\n"
-                    "  <div class=\"container\">\n"
-                    "    <div class=\"header\">Some Recommendations in London for the next 10 days</div>\n"
-            )
-            continue
-        border_color = rainbow_colors[idx % len(rainbow_colors)]
-        html += f'    <div class="event-box" style="border: 6px solid {border_color};">\n'
-        html += f"      <div class=\"event-title\">{md_to_html(event.get('title',''))}</div>\n"
-        html += f"      <div class=\"event-meta\"><b>{md_to_html(event.get('venue',''))}</b> &mdash; {md_to_html(event.get('date',''))}</div>\n"
-        html += f"      <div class=\"event-desc\">{md_to_html(event.get('desc',''))}</div>\n"
-        if event.get("link", ""):
-            html += f"      <div class=\"event-link\"><a href=\"{event.get('link','')}\" target=\"_blank\">{md_to_html(event.get('link_text','More Info'))}</a></div>\n"
-        html += "    </div>\n"
-    if bonus:
-        html += f'    <div class="event-box" style="border-left: 6px solid #e26a4a;">\n'
-        html += f'      <div class="event-title">✨ Bonus Suggestion</div>\n'
-        html += f'      <div class="event-desc">{md_to_html(bonus)}</div>\n'
-        html += "    </div>\n"
-    html += "  </div>\n</body>\n</html>"
-    logger.info(f"Formatted HTML output successfully. size={len(html)} characters")
-    return html
+
+    #  "title": "Hilary Lloyd: Very High Frequency",
+    #       "date": "10 Sep 2025 – 11 Jan 2026",
+    #       "location": "Studio Voltaire, Clapham",
+    #       "description": "A radical, performative archival re‑working of Dennis Potter’s media—live interludes, texts and footage probe politics, mortality and televisual memory.",
+    #       "url": "
+
+    def card(ev, color):
+        t = escape(str(ev.get("title", "")).strip())
+        v = escape(str(ev.get("location", "")).strip())
+        d = escape(str(ev.get("date", "")).strip())
+        desc = escape(str(ev.get("description", "")).strip())
+        link = (ev.get("url") or "").strip()
+
+        link_html = (
+            f'<a href="{escape(link)}" style="font-size:14px; text-decoration:underline; color:{color};">More Info</a>'
+            if link
+            else ""
+        )
+
+        return f"""
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid {color}; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">{t}</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> {v}</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> {d}</div>
+      {f'<div style="font-size:14px; margin:0 0 10px 0;">{desc}</div>' if desc else ''}
+      {link_html}
+    </td>
+  </tr>
+</table>
+"""
+
+    cards = "".join(
+        card(ev, palette[i % len(palette)]) for i, ev in enumerate(events or [])
+    )
+
+    bonus_html = ""
+    if bonus and bonus.strip():
+        bonus_html = f"""
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px dashed #607d8b; border-radius:12px; margin:16px 0; background:#f7f9fb;">
+  <tr>
+    <td style="padding:14px 16px; font-family: Arial, Helvetica, sans-serif; line-height:1.5; color:#102027;">
+      <div style="font-size:16px; font-weight:700; margin:0 0 6px 0;">Bonus</div>
+      <div style="font-size:14px;">{escape(bonus.strip())}</div>
+    </td>
+  </tr>
+</table>
+"""
+
+    preheader = f"Upcoming picks: {len(events or [])} items · Bonus inside."
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    heading = escape(title or "Events Digest")
+
+    return f"""<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{heading}</title>
+  </head>
+  <body style="margin:0; padding:0; background:#f0f2f5;">
+    <div style="display:none; overflow:hidden; line-height:1px; opacity:0; max-height:0; max-width:0;">{escape(preheader)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0"
+                 style="width:680px; max-width:680px; background:#ffffff; border-radius:14px; border:1px solid #e0e0e0;">
+            <tr>
+              <td style="padding:22px 24px 6px 24px; font-family: Arial, Helvetica, sans-serif; color:#111111;">
+                <div style="font-size:22px; font-weight:800; margin:0 0 4px 0;">{heading}</div>
+                <div style="font-size:12px; color:#6b6b6b; margin:0 0 10px 0;">Generated {escape(now)}</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 18px 24px;">
+                {cards}
+                {bonus_html}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 24px 22px 24px; font-family: Arial, Helvetica, sans-serif; font-size:12px; color:#818181;">
+                <div>If this email looks odd, try viewing it in your browser.</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>"""
 
 
 # Example usage:
@@ -131,4 +159,4 @@ if __name__ == "__main__":
         # ... more events ...
     ]
     bonus = "For something unexpected but potentially captivating, you might enjoy exploring a pop-up immersive theatre experience that challenges traditional narratives and invites audience participation in a thought-provoking way."
-    print(format_culture_html(events, bonus))
+    print(render_events_email(events, bonus))

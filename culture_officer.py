@@ -4,6 +4,7 @@ cultural events coming up in London, and email results.
 """
 
 from pprint import PrettyPrinter
+
 from format_culture_html import parse_and_format_culture_html
 import os
 import requests
@@ -13,10 +14,13 @@ from config import Config
 from mailjet_rest import Client
 from typing import Optional
 import json
-
-from cultural_officer_system_prompt import system_prompt, user_prompt
+import openai
+from openai import OpenAI
+from cultural_officer_system_prompt import get_system_prompt, get_user_prompt
 
 # from ppx_cultural_officer_system_prompt import system_prompt
+
+logger = logging.getLogger(__name__)
 
 from flask import Request
 
@@ -84,7 +88,7 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
         # temperature and top_p not supported by search-preview model
         # "temperature": config.openai_temperature,
         # "top_p": config.openai_top_p,
-        "response_format": {"type": "text"},  # force plain text
+        "response_format": {"type": "json_object"},
     }
     logger.info("Sending request to OpenAI API...")
     if config.debug:
@@ -103,7 +107,6 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
     result = response.json()
     logger.info("Received response from OpenAI API.")
     if config.debug:
-        logger.info("System Prompt: \n%s\n", system_prompt)
         logger.info("json result: \n%s\n", json.dumps(result, indent=2))
 
     msg = result["choices"][0]["message"]
@@ -116,6 +119,68 @@ def call_gpt(system_prompt: str, user_prompt: str, config: Config) -> str:
         logger.warning("full choice: %s", json.dumps(result["choices"][0], indent=2))
 
     return result["choices"][0]["message"]["content"]
+
+
+def call_gpt_formatted_search_enabled(
+    system_prompt: str, user_prompt: str, config
+) -> dict:
+    client = OpenAI(api_key=config.openai_api_key)
+
+    schema = {
+        "type": "object",
+        "required": ["bonus", "events"],
+        "additionalProperties": False,
+        "properties": {
+            "bonus": {"type": ["string", "null"]},
+            "events": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["title", "date", "location", "description", "url"],
+                    "additionalProperties": False,
+                    "properties": {
+                        "title": {"type": "string"},
+                        "date": {"type": "string"},
+                        "location": {"type": "string"},
+                        "description": {"type": "string", "maxLength": 200},
+                        "url": {"type": "string"},
+                    },
+                },
+            },
+        },
+    }
+
+    try:
+        response = client.responses.create(
+            model=config.openai_model,
+            tools=[{"type": "web_search"}],
+            tool_choice="auto",
+            input=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "CulturalEvents",
+                    "strict": True,
+                    "schema": schema,
+                }
+            },
+        )
+
+        if response.status == "completed":
+            data = json.loads(response.output_text)
+            logger.info(
+                "Parsed response:\n%s", json.dumps(data, indent=2, ensure_ascii=False)
+            )
+            return data
+        else:
+            logger.error("Response incomplete: %s", response.incomplete_details)
+            return {}
+    except Exception as e:
+        logger.exception("Error in call_gpt_search_enabled: %s", e)
+        return {}
 
 
 def send_email(subject: str, html_body: str, config: Config):
@@ -153,25 +218,38 @@ def handler(request: Request) -> dict:
     Google Cloud Function entry point for scheduled trigger.
     """
     logger.info("Handler triggered.")
+    logger.info(f"openai.version: {openai.__version__}")
     config = Config().load_and_validate()
     # Update user/system prompt to request structured JSON
-    structured_user_prompt = user_prompt + "\nPlease return the results as a JSON array of objects, each with fields: title, date, location, description, url."
     logger.info("Calling GPT with system prompt and user prompt for structured JSON.")
-    llm_result = call_gpt(system_prompt, structured_user_prompt, config)
-    # Parse JSON result
-    try:
-        results_obj = json.loads(llm_result)
-    except Exception as e:
-        logger.error(f"Failed to parse LLM result as JSON: {e}\nRaw result: {llm_result}")
-        results_obj = []
+    llm_result = call_gpt_formatted_search_enabled(
+        get_system_prompt(), get_user_prompt(), config
+    )
+    if config.debug:
+        llm_debug_path = os.path.join(
+            os.path.dirname(__file__), "tests", "LLM_result.txt"
+        )
+        with open(llm_debug_path, "w", encoding="utf-8") as f:
+            f.write(PrettyPrinter().pformat(llm_result))
+        logger.info("Debug mode: LLM output saved to %s", llm_debug_path)
+
     # Format HTML using the structured results
-    html_body = parse_and_format_culture_html(results_obj)
+    html_body = parse_and_format_culture_html(
+        llm_result.get("events"), llm_result.get("bonus")
+    )
     subject = "Culture Officer Report"
     if config.debug:
-        debug_path = os.path.join(os.path.dirname(__file__), "html_result.html")
-        with open(debug_path, "w", encoding="utf-8") as f:
+        html_debug_path = os.path.join(
+            os.path.dirname(__file__), "tests", "html_result.html"
+        )
+        with open(html_debug_path, "w", encoding="utf-8") as f:
             f.write(html_body)
-        logger.info("Debug mode: formatted HTML output saved to %s", debug_path)
+        logger.info("Debug mode: formatted HTML output saved to %s", html_debug_path)
+
     status_code, response_json = send_email(subject, html_body, config)
     logger.info("Handler completed. Status: %s", status_code)
     return {"statusCode": status_code, "body": response_json, "log": html_body}
+
+
+if __name__ == "__main__":
+    handler(None)
