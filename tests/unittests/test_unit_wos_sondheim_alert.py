@@ -3,7 +3,7 @@ pytest -v tests/unittests/test_unit_wos_sondheim_alert.py
 """
 
 import pytest
-from netlify.functions import wos_sondheim_alert
+import main
 
 
 @pytest.fixture
@@ -48,14 +48,14 @@ def html_info_page():
 
 
 def test_extract_info_links(html_with_link, show_name):
-    result, log = wos_sondheim_alert.extract_info_links(html_with_link, show_name)
+    result, log = main.extract_info_links(html_with_link, show_name)
     assert isinstance(result, list)
     assert any("frogs-info" in link for link in result)
     assert "found" in log or "no show info links" in log
 
 
 def test_extract_details_from_info_page(html_info_page, show_name):
-    text_result, html_result = wos_sondheim_alert.extract_details_from_info_page(
+    text_result, html_result = main.extract_details_from_info_page(
         show_name, html_info_page
     )
     assert isinstance(text_result, str)
@@ -72,9 +72,9 @@ def test_search_shows(monkeypatch, show_name, html_with_link, html_info_page):
     def fake_get_info_page(url):
         return html_info_page, ""
 
-    monkeypatch.setattr(wos_sondheim_alert, "get_show_page", fake_get_show_page)
-    monkeypatch.setattr(wos_sondheim_alert, "get_info_page", fake_get_info_page)
-    result, html_report = wos_sondheim_alert.search_shows([show_name])
+    monkeypatch.setattr(main, "get_show_page", fake_get_show_page)
+    monkeypatch.setattr(main, "get_info_page", fake_get_info_page)
+    result, html_report = main.search_shows([show_name])
     assert isinstance(result, str)
     assert isinstance(html_report, str)
     assert "The Frogs" in result
