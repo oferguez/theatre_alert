@@ -1,79 +1,81 @@
-I'm here to help with your cultural exploration in London from August 05 to August 15, 2025, with events tailored to your tastes. Here's a curated list of events reflecting queerness, intimacy, vulnerability, playfulness, emotional depth, political critique, and experimental form:
-
----
-
-🎭 **"Queer Visions: A Film Retrospective"**  
-📍 BFI Southbank (Southbank)  
-📅 August 5 - August 9, 2025, Various times  
-📖 This retrospective showcases influential queer films, celebrating their impact on cinema and culture. Expect to see screenings of both classics and lesser-known gems, each followed by discussions with filmmakers and critics.  
-🔗 [BFI Southbank](https://www.bfi.org.uk/southbank)
-
----
-
-🎭 **"Embodied Politics: Performance Art and Protest"**  
-📍 The Whitechapel Gallery (Whitechapel)  
-📅 August 6 - August 15, 2025, 11:00 AM - 6:00 PM  
-📖 A captivating exhibition exploring the intersection of performance art and political activism. Featuring works by artists who use the body as a site of protest, this show challenges perceptions and provokes dialogue.  
-🔗 [Whitechapel Gallery](https://www.whitechapelgallery.org)
-
----
-
-🎭 **"Intimate Encounters: An Evening of Queer Theatre"**  
-📍 The Yard Theatre (Hackney Wick)  
-📅 August 7, 2025, 7:30 PM  
-📖 A night of raw and poignant performances from emerging queer playwrights, delving into themes of love, identity, and resistance, offering a platform for new voices and stories.  
-🔗 [The Yard Theatre](https://www.theyardtheatre.co.uk)
-
----
-
-🎭 **"Moonlight: Under the Stars Screening"**  
-📍 Rooftop Film Club (Peckham)  
-📅 August 8, 2025, 8:00 PM  
-📖 Experience the emotionally powerful film "Moonlight" in an open-air setting. This enchanting evening promises an intimate atmosphere to reflect on the film’s themes of identity and connection.  
-🔗 [Rooftop Film Club](https://www.rooftopfilmclub.com)
-
----
-
-🎭 **"Art and Activism: A Queer Perspective"**  
-📍 Tate Modern (Bankside)  
-📅 August 9, 2025, 2:00 PM  
-📖 Join a panel of artists and activists as they discuss the role of art in queer activism. This insightful talk will delve into how creative expressions can challenge societal norms and inspire change.  
-🔗 [Tate Modern](https://www.tate.org.uk/visit/tate-modern)
-
----
-
-🎭 **"Hunger: A Queer Performance Night"**  
-📍 Rich Mix (Shoreditch)  
-📅 August 10, 2025, 7:00 PM  
-📖 A vibrant showcase of queer performance art, featuring dance, spoken word, and multimedia pieces. This event celebrates diversity and creativity, with a focus on raw emotion and political expression.  
-🔗 [Rich Mix](https://www.richmix.org.uk)
-
----
-
-🎭 **"The Radical Queer Film Festival"**  
-📍 The Cinema Museum (Kennington)  
-📅 August 11 - August 13, 2025, Various times  
-📖 This festival presents a selection of bold and challenging queer films, aiming to push the boundaries of cinematic storytelling. Engage with filmmakers in post-screening Q&As and panel discussions.  
-🔗 [The Cinema Museum](https://www.cinemamuseum.org.uk)
-
----
-
-🎭 **"Nan Goldin: The Personal is Political"**  
-📍 Barbican Centre (Barbican)  
-📅 August 12 - August 15, 2025, 10:00 AM - 6:00 PM  
-📖 Dive into the emotionally charged photography of Nan Goldin, whose intimate portraits capture the essence of queer life and vulnerability, set against the backdrop of social and political change.  
-🔗 [Barbican Centre](https://www.barbican.org.uk)
-
----
-
-🎭 **"Experimental Soundscapes: A Queer Audio Journey"**  
-📍 Cafe OTO (Dalston)  
-📅 August 13, 2025, 8:00 PM  
-📖 Explore the intersection of sound and identity in this immersive audio experience. Featuring queer sound artists who blend music, spoken word, and ambient sound, this event promises a thought-provoking evening.  
-🔗 [Cafe OTO](https://www.cafeoto.co.uk)
-
----
-
-🎭 **"Queer Poetry Slam: Voices of Resistance"**  
-📍 The Poetry Cafe (Covent Garden)  
-📅 August 14
+{'bonus': 'A left‑field spark: hop on the London Overground to Shadwell and '
+          'step into the unexpected – a spontaneous midnight screening of '
+          'Chris Marker’s “La Jetée” projected onto the Thames under the '
+          'silvery glow of Tower Bridge. No tickets required (just wander '
+          'down, bring a coat, and watch time unravel in silent poetry).',
+ 'events': [{'date': '4 Sept\u202f–\u202f11 Oct 2025',
+             'description': 'A wordless, eco‑minded, avant‑garde performance '
+                            'that decentrally depicts a day in the life of a '
+                            'cow and a deer, evoking vulnerability and '
+                            'non‑human perspectives.',
+             'location': 'Royal Court Theatre, Sloane Square (Chelsea)',
+             'title': '“Cow\u202f|\u202fDeer” by Katie Mitchell',
+             'url': 'https://www.timeout.com/london/things-to-do/katie-mitchell-cow-deer'},
+            {'date': '13 Sept 2025\u202f–\u202f8 Feb 2026',
+             'description': 'Neo‑impressionist pointillist works by Seurat, '
+                            'Signac, capturing emotional light and radical '
+                            'form across delicate stillness and modern '
+                            'dialogue.',
+             'location': 'National Gallery, Trafalgar Square (Westminster)',
+             'title': '“Radical Harmony” Neo‑Impressionists',
+             'url': 'https://www.timeout.com/london/things-to-do/london-events-september'},
+            {'date': '27 Sept 2025',
+             'description': 'A multi‑venue takeover elevating alternative East '
+                            'and South‑East Asian creativity in music, '
+                            'performance and queer culture’s experimental '
+                            'edges.',
+             'location': 'Exhibition (White City) & Scala (King’s Cross)',
+             'title': 'Margins United Festival',
+             'url': 'https://www.timeout.com/london/things-to-do/london-events-september'},
+            {'date': '24 Sept\u202f–\u202f28 Sept 2025',
+             'description': 'Guided walks exploring Chelsea’s punk past and a '
+                            'session on making herbal plague '
+                            'remedies—juxtaposing subculture, history and '
+                            'political resilience.',
+             'location': 'Chelsea Physic Garden & Royal Hospital Chelsea '
+                         '(Chelsea)',
+             'title': 'Chelsea History Festival – Punk & Plague Talks',
+             'url': 'https://www.timeout.com/london/things-to-do/london-events-september'},
+            {'date': '8 Oct 2025\u202f–\u202f1 Mar 2026 (opens 8 Oct)',
+             'description': 'A retrospective merging experimental photographic '
+                            'techniques with intimate, politically charged '
+                            'narratives of identity and cultural memory.',
+             'location': 'Whitechapel Gallery, Whitechapel (Tower Hamlets)',
+             'title': 'Joy Gregory: “Catching Flies With Honey”',
+             'url': 'https://www.theguardian.com/artanddesign/2025/sep/18/joy-gregory-artist-photographer-interview-whitechapel-gallery-london-exhibition'},
+            {'date': 'September\u202f2025 (ongoing)',
+             'description': 'Stylized portraits reimagining Black masculinity '
+                            'and queered self‑presentation through fashion, '
+                            'identity and diasporic narratives.',
+             'location': 'Gagosian Burlington Arcade (Mayfair)',
+             'title': 'Tyler Mitchell: “Portrait of the Modern Dandy”',
+             'url': 'https://www.wallpaper.com/fashion-beauty/fashion-beauty-events/tyler-mitchell-portrait-of-the-modern-dandy-exhibition-gagosian-london'},
+            {'date': '25 Sept 2025',
+             'description': 'Special Q&A screening of Nadia Fall’s raw, '
+                            'politically charged film about teenage girls led '
+                            'to extremism, exploring vulnerability and '
+                            'empathetic critique.',
+             'location': 'BFI Southbank (Southbank)',
+             'title': 'BFI Southbank Q&A: “Brides” + Screening',
+             'url': 'https://en.wikipedia.org/wiki/Brides_%282025_film%29'},
+            {'date': '26 Sept 2025',
+             'description': 'Raw, emotionally urgent drama tracing teenage '
+                            'radicalisation with intimacy and empathetic depth '
+                            'in a hard‑hitting narrative.',
+             'location': 'Various cinemas (UK-wide)',
+             'title': '“Brides” Nationwide Preview',
+             'url': 'https://en.wikipedia.org/wiki/Brides_%282025_film%29'},
+            {'date': 'September\u202f2025 (in‑week)',
+             'description': 'A radical revisit to 1970s US student turmoil, '
+                            'politically charged and formally experimental in '
+                            'installation and archival exploration.',
+             'location': 'Artangel (London central)',
+             'title': 'Naomi Mohaiemen: “Through a Mirror, Darkly”',
+             'url': 'https://www.theguardian.com/artanddesign/2025/sep/19/kerry-james-marshall-marie-antoinette-art-weekly'},
+            {'date': 'September\u202f2025 (ongoing)',
+             'description': 'Visceral, emotionally raw paintings exploring the '
+                            'body, identity and queerness through expressive, '
+                            'transgressive figuration.',
+             'location': 'National Portrait Gallery (Westminster)',
+             'title': 'Jenny Saville Retrospective',
+             'url': 'https://www.wallpaper.com/art/exhibitions-shows/london-art-exhibitions'}]}
