@@ -1,88 +1,177 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; }
-    .container { max-width: 700px; margin: 0 auto; }
-    .header { font-size: 1.5em; margin: 30px 0 20px 0; font-weight: bold; }
-    .intro { font-size: 1.1em; margin-bottom: 18px; color: #222; }
-    .event-box {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 24px;
-      padding: 22px 28px 18px 28px;
-      border: 6px solid #4a90e2;
-    }
-    .event-title { font-size: 1.15em; font-weight: bold; margin-bottom: 7px; }
-    .event-meta { color: #555; margin-bottom: 7px; }
-    .event-desc { font-size: 1.15em; margin-bottom: 7px; font}
-    .event-link a { color: #4a90e2; text-decoration: none; }
-    .event-link a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">Some Recommendations in London for the next 10 days</div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Queer Visions: A Film Retrospective"</b></div>
-      <div class="event-meta"><b>BFI Southbank (Southbank)</b> &mdash; August 5 - August 9, 2025, Various times</div>
-      <div class="event-desc">This retrospective showcases influential queer films, celebrating their impact on cinema and culture. Expect to see screenings of both classics and lesser-known gems, each followed by discussions with filmmakers and critics.</div>
-      <div class="event-link"><a href="https://www.bfi.org.uk/southbank" target="_blank">BFI Southbank</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Embodied Politics: Performance Art and Protest"</b></div>
-      <div class="event-meta"><b>The Whitechapel Gallery (Whitechapel)</b> &mdash; August 6 - August 15, 2025, 11:00 AM - 6:00 PM</div>
-      <div class="event-desc">A captivating exhibition exploring the intersection of performance art and political activism. Featuring works by artists who use the body as a site of protest, this show challenges perceptions and provokes dialogue.</div>
-      <div class="event-link"><a href="https://www.whitechapelgallery.org" target="_blank">Whitechapel Gallery</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Intimate Encounters: An Evening of Queer Theatre"</b></div>
-      <div class="event-meta"><b>The Yard Theatre (Hackney Wick)</b> &mdash; August 7, 2025, 7:30 PM</div>
-      <div class="event-desc">A night of raw and poignant performances from emerging queer playwrights, delving into themes of love, identity, and resistance, offering a platform for new voices and stories.</div>
-      <div class="event-link"><a href="https://www.theyardtheatre.co.uk" target="_blank">The Yard Theatre</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Moonlight: Under the Stars Screening"</b></div>
-      <div class="event-meta"><b>Rooftop Film Club (Peckham)</b> &mdash; August 8, 2025, 8:00 PM</div>
-      <div class="event-desc">Experience the emotionally powerful film "Moonlight" in an open-air setting. This enchanting evening promises an intimate atmosphere to reflect on the film’s themes of identity and connection.</div>
-      <div class="event-link"><a href="https://www.rooftopfilmclub.com" target="_blank">Rooftop Film Club</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Art and Activism: A Queer Perspective"</b></div>
-      <div class="event-meta"><b>Tate Modern (Bankside)</b> &mdash; August 9, 2025, 2:00 PM</div>
-      <div class="event-desc">Join a panel of artists and activists as they discuss the role of art in queer activism. This insightful talk will delve into how creative expressions can challenge societal norms and inspire change.</div>
-      <div class="event-link"><a href="https://www.tate.org.uk/visit/tate-modern" target="_blank">Tate Modern</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Hunger: A Queer Performance Night"</b></div>
-      <div class="event-meta"><b>Rich Mix (Shoreditch)</b> &mdash; August 10, 2025, 7:00 PM</div>
-      <div class="event-desc">A vibrant showcase of queer performance art, featuring dance, spoken word, and multimedia pieces. This event celebrates diversity and creativity, with a focus on raw emotion and political expression.</div>
-      <div class="event-link"><a href="https://www.richmix.org.uk" target="_blank">Rich Mix</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"The Radical Queer Film Festival"</b></div>
-      <div class="event-meta"><b>The Cinema Museum (Kennington)</b> &mdash; August 11 - August 13, 2025, Various times</div>
-      <div class="event-desc">This festival presents a selection of bold and challenging queer films, aiming to push the boundaries of cinematic storytelling. Engage with filmmakers in post-screening Q&As and panel discussions.</div>
-      <div class="event-link"><a href="https://www.cinemamuseum.org.uk" target="_blank">The Cinema Museum</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Nan Goldin: The Personal is Political"</b></div>
-      <div class="event-meta"><b>Barbican Centre (Barbican)</b> &mdash; August 12 - August 15, 2025, 10:00 AM - 6:00 PM</div>
-      <div class="event-desc">Dive into the emotionally charged photography of Nan Goldin, whose intimate portraits capture the essence of queer life and vulnerability, set against the backdrop of social and political change.</div>
-      <div class="event-link"><a href="https://www.barbican.org.uk" target="_blank">Barbican Centre</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Experimental Soundscapes: A Queer Audio Journey"</b></div>
-      <div class="event-meta"><b>Cafe OTO (Dalston)</b> &mdash; August 13, 2025, 8:00 PM</div>
-      <div class="event-desc">Explore the intersection of sound and identity in this immersive audio experience. Featuring queer sound artists who blend music, spoken word, and ambient sound, this event promises a thought-provoking evening.</div>
-      <div class="event-link"><a href="https://www.cafeoto.co.uk" target="_blank">Cafe OTO</a></div>
-    </div>
-    <div class="event-box">
-      <div class="event-title">🎭 <b>"Queer Poetry Slam: Voices of Resistance"</b></div>
-      <div class="event-meta"><b>The Poetry Cafe (Covent Garden)</b> &mdash; August 14</div>
-      <div class="event-desc"></div>
-    </div>
-  </div>
-</body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Culture Officer Report</title>
+  </head>
+  <body style="margin:0; padding:0; background:#f0f2f5;">
+    <div style="display:none; overflow:hidden; line-height:1px; opacity:0; max-height:0; max-width:0;">Upcoming picks: 10 items · Bonus inside.</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0"
+                 style="width:680px; max-width:680px; background:#ffffff; border-radius:14px; border:1px solid #e0e0e0;">
+            <tr>
+              <td style="padding:22px 24px 6px 24px; font-family: Arial, Helvetica, sans-serif; color:#111111;">
+                <div style="font-size:22px; font-weight:800; margin:0 0 4px 0;">Culture Officer Report</div>
+                <div style="font-size:12px; color:#6b6b6b; margin:0 0 10px 0;">Generated 2025-09-23 11:03 UTC</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 18px 24px;">
+                
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #e53935; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">“Cow | Deer” by Katie Mitchell</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Royal Court Theatre, Sloane Square (Chelsea)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 4 Sept – 11 Oct 2025</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">A wordless, eco‑minded, avant‑garde performance that decentrally depicts a day in the life of a cow and a deer, evoking vulnerability and non‑human perspectives.</div>
+      <a href="https://www.timeout.com/london/things-to-do/katie-mitchell-cow-deer" style="font-size:14px; text-decoration:underline; color:#e53935;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #f39c12; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">“Radical Harmony” Neo‑Impressionists</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> National Gallery, Trafalgar Square (Westminster)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 13 Sept 2025 – 8 Feb 2026</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Neo‑impressionist pointillist works by Seurat, Signac, capturing emotional light and radical form across delicate stillness and modern dialogue.</div>
+      <a href="https://www.timeout.com/london/things-to-do/london-events-september" style="font-size:14px; text-decoration:underline; color:#f39c12;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #fbc02d; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Margins United Festival</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Exhibition (White City) &amp; Scala (King’s Cross)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 27 Sept 2025</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">A multi‑venue takeover elevating alternative East and South‑East Asian creativity in music, performance and queer culture’s experimental edges.</div>
+      <a href="https://www.timeout.com/london/things-to-do/london-events-september" style="font-size:14px; text-decoration:underline; color:#fbc02d;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #43a047; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Chelsea History Festival – Punk &amp; Plague Talks</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Chelsea Physic Garden &amp; Royal Hospital Chelsea (Chelsea)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 24 Sept – 28 Sept 2025</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Guided walks exploring Chelsea’s punk past and a session on making herbal plague remedies—juxtaposing subculture, history and political resilience.</div>
+      <a href="https://www.timeout.com/london/things-to-do/london-events-september" style="font-size:14px; text-decoration:underline; color:#43a047;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #1e88e5; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Joy Gregory: “Catching Flies With Honey”</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Whitechapel Gallery, Whitechapel (Tower Hamlets)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 8 Oct 2025 – 1 Mar 2026 (opens 8 Oct)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">A retrospective merging experimental photographic techniques with intimate, politically charged narratives of identity and cultural memory.</div>
+      <a href="https://www.theguardian.com/artanddesign/2025/sep/18/joy-gregory-artist-photographer-interview-whitechapel-gallery-london-exhibition" style="font-size:14px; text-decoration:underline; color:#1e88e5;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #8e24aa; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Tyler Mitchell: “Portrait of the Modern Dandy”</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Gagosian Burlington Arcade (Mayfair)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> September 2025 (ongoing)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Stylized portraits reimagining Black masculinity and queered self‑presentation through fashion, identity and diasporic narratives.</div>
+      <a href="https://www.wallpaper.com/fashion-beauty/fashion-beauty-events/tyler-mitchell-portrait-of-the-modern-dandy-exhibition-gagosian-london" style="font-size:14px; text-decoration:underline; color:#8e24aa;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #009688; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">BFI Southbank Q&amp;A: “Brides” + Screening</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> BFI Southbank (Southbank)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 25 Sept 2025</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Special Q&amp;A screening of Nadia Fall’s raw, politically charged film about teenage girls led to extremism, exploring vulnerability and empathetic critique.</div>
+      <a href="https://en.wikipedia.org/wiki/Brides_%282025_film%29" style="font-size:14px; text-decoration:underline; color:#009688;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #ef6c00; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">“Brides” Nationwide Preview</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Various cinemas (UK-wide)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> 26 Sept 2025</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Raw, emotionally urgent drama tracing teenage radicalisation with intimacy and empathetic depth in a hard‑hitting narrative.</div>
+      <a href="https://en.wikipedia.org/wiki/Brides_%282025_film%29" style="font-size:14px; text-decoration:underline; color:#ef6c00;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #e53935; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Naomi Mohaiemen: “Through a Mirror, Darkly”</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> Artangel (London central)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> September 2025 (in‑week)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">A radical revisit to 1970s US student turmoil, politically charged and formally experimental in installation and archival exploration.</div>
+      <a href="https://www.theguardian.com/artanddesign/2025/sep/19/kerry-james-marshall-marie-antoinette-art-weekly" style="font-size:14px; text-decoration:underline; color:#e53935;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px solid #f39c12; border-radius:12px; margin:12px 0; background:#ffffff;">
+  <tr>
+    <td style="padding:16px 18px; font-family: Arial, Helvetica, sans-serif; line-height:1.45; color:#111111;">
+      <div style="font-size:20px; font-weight:700; margin:0 0 6px 0;">Jenny Saville Retrospective</div>
+      <div style="font-size:14px; margin:0 0 4px 0;"><span style="font-weight:700;">Venue:</span> National Portrait Gallery (Westminster)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;"><span style="font-weight:700;">Dates:</span> September 2025 (ongoing)</div>
+      <div style="font-size:14px; margin:0 0 10px 0;">Visceral, emotionally raw paintings exploring the body, identity and queerness through expressive, transgressive figuration.</div>
+      <a href="https://www.wallpaper.com/art/exhibitions-shows/london-art-exhibitions" style="font-size:14px; text-decoration:underline; color:#f39c12;">More Info</a>
+    </td>
+  </tr>
+</table>
+
+                
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="border:2px dashed #607d8b; border-radius:12px; margin:16px 0; background:#f7f9fb;">
+  <tr>
+    <td style="padding:14px 16px; font-family: Arial, Helvetica, sans-serif; line-height:1.5; color:#102027;">
+      <div style="font-size:16px; font-weight:700; margin:0 0 6px 0;">Bonus</div>
+      <div style="font-size:14px;">A left‑field spark: hop on the London Overground to Shadwell and step into the unexpected – a spontaneous midnight screening of Chris Marker’s “La Jetée” projected onto the Thames under the silvery glow of Tower Bridge. No tickets required (just wander down, bring a coat, and watch time unravel in silent poetry).</div>
+    </td>
+  </tr>
+</table>
+
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 24px 22px 24px; font-family: Arial, Helvetica, sans-serif; font-size:12px; color:#818181;">
+                <div>If this email looks odd, try viewing it in your browser.</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>
