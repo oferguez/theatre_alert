@@ -74,7 +74,8 @@ def test_search_shows(monkeypatch, show_name, html_with_link, html_info_page):
 
     monkeypatch.setattr(main, "get_show_page", fake_get_show_page)
     monkeypatch.setattr(main, "get_info_page", fake_get_info_page)
-    result, html_report = main.search_shows([show_name])
+    # result, html_report = main.search_shows([show_name])
+    _, result, html_report = main.search_shows([show_name])
     assert isinstance(result, str)
     assert isinstance(html_report, str)
     assert "The Frogs" in result

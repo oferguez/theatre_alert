@@ -5,6 +5,7 @@ Unit test for culture officer that uses saved GPT results instead of calling the
 import os
 import unittest
 import logging
+import ast
 from unittest.mock import patch, MagicMock
 from format_culture_html import parse_and_format_culture_html
 
@@ -29,28 +30,35 @@ class TestCultureOfficerFormatter(unittest.TestCase):
         """Test parsing and formatting of saved GPT results."""
         # Load saved GPT results from debug file
         with open(self.debug_file_path, "r", encoding="utf-8") as f:
-            gpt_result = f.read()
+            gpt_result_str = f.read()
+
+        # Parse the string as a Python literal (dict)
+        gpt_result = ast.literal_eval(gpt_result_str)
 
         # Format the results to HTML
-        html_output = parse_and_format_culture_html(gpt_result)
+        html_output = parse_and_format_culture_html(
+            gpt_result["events"], gpt_result["bonus"]
+        )
 
         # Verify HTML structure
-        self.assertIn("<!DOCTYPE html>", html_output)
+        self.assertIn("<!doctype html>", html_output)
         self.assertIn("<html>", html_output)
-        self.assertIn("Some Recommendations in London", html_output)
-        self.assertIn("event-box", html_output)
+        self.assertIn("Culture Officer Report", html_output)
 
         # Check for specific events from the saved results
-        self.assertIn("Queer Visions: A Film Retrospective", html_output)
-        self.assertIn("Intimate Encounters: An Evening of Queer Theatre", html_output)
-        self.assertIn("Moonlight: Under the Stars Screening", html_output)
-        self.assertIn("Art and Activism: A Queer Perspective", html_output)
+        self.assertIn("Cow", html_output)
+        self.assertIn("Royal Court Theatre", html_output)
+        self.assertIn("Radical Harmony", html_output)
+        self.assertIn("National Gallery", html_output)
 
         # Verify links are properly formatted
         self.assertIn("<a href=", html_output)
-        self.assertIn('target="_blank"', html_output)
 
-    @patch("culture_officer.call_gpt")
+        # Check for bonus content
+        self.assertIn("Bonus", html_output)
+        self.assertIn("midnight screening", html_output)
+
+    @patch("culture_officer.call_gpt_formatted_search_enabled")
     @patch("culture_officer.send_email")
     def test_handler_with_mock_gpt_response(self, mock_send_email, mock_call_gpt):
         """Test the handler function using saved GPT results instead of API call."""
@@ -59,7 +67,10 @@ class TestCultureOfficerFormatter(unittest.TestCase):
 
         # Load saved GPT results
         with open(self.debug_file_path, "r", encoding="utf-8") as f:
-            saved_gpt_result = f.read()
+            saved_gpt_result_str = f.read()
+
+        # Parse the string as a Python literal (dict)
+        saved_gpt_result = ast.literal_eval(saved_gpt_result_str)
 
         # Mock the GPT call to return saved results
         mock_call_gpt.return_value = saved_gpt_result
@@ -77,7 +88,10 @@ class TestCultureOfficerFormatter(unittest.TestCase):
             # Verify the handler completed successfully
             self.assertEqual(result["statusCode"], 200)
             self.assertIn("success", str(result["body"]))
-            self.assertEqual(result["log"], saved_gpt_result)
+
+            # Verify the log contains HTML (which is now the formatted output)
+            self.assertIn("<!doctype html>", result["log"])
+            self.assertIn("Culture Officer Report", result["log"])
 
             # Verify GPT was "called" once
             mock_call_gpt.assert_called_once()
@@ -89,10 +103,15 @@ class TestCultureOfficerFormatter(unittest.TestCase):
         """Test that HTML file is created correctly from saved GPT results."""
         # Load saved GPT results
         with open(self.debug_file_path, "r", encoding="utf-8") as f:
-            gpt_result = f.read()
+            gpt_result_str = f.read()
+
+        # Parse the string as a Python literal (dict)
+        gpt_result = ast.literal_eval(gpt_result_str)
 
         # Format to HTML
-        html_output = parse_and_format_culture_html(gpt_result)
+        html_output = parse_and_format_culture_html(
+            gpt_result["events"], gpt_result["bonus"]
+        )
 
         # Save to test HTML file
         test_html_path = os.path.join(
