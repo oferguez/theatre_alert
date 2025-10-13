@@ -15,6 +15,9 @@ def get_system_prompt():
         – the page is not an archive/past listing.
         • If any check fails, exclude the item.
         • Prefer primary sources (venue/org/cinema/museum sites); otherwise use BFI, ICA, Barbican, Tate, Whitechapel, Southbank, ArtRabbit, TimeOut, The Guardian listings.
+        • Also search aggregator sites, such as:
+           - https://www.qxmagazine.com
+           - https://www.flolondon.co.uk
         • For each event include:
         "title", "venue", "neighbourhood", "start_date", "end_date",
             "datetime_text_found", "description", "source_url", "source_title",
