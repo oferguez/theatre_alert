@@ -29,7 +29,7 @@ project_root/
 - **tests/unittests/**: Unit tests for individual functions, using mocked HTML and monkeypatching network calls.
 - **config.py**: Singleton config loader/validator, used everywhere as `from config import config`.
 
-## How to Run Unit Tests
+## How to Run Unit Tests 
 
 Unit tests are in `tests/unittests/` and use `pytest`:
 
